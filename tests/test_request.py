@@ -1,4 +1,4 @@
-from reqflow.rest.request import Request
+from reqflow.request import Request
 
 
 def test_with_params():

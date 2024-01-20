@@ -1,4 +1,4 @@
-from reqflow.rest.client import Client
+from reqflow import Client
 from reqflow.response.response import UnifiedResponse
 
 

@@ -1,6 +1,5 @@
-from reqflow.rest.client import Client
-from reqflow.rest.fluent_api import given
-from reqflow.rest.assertions import is_
+from reqflow import Client, given
+from reqflow.assertions import is_
 
 
 client = Client(base_url="https://httpbin.org")

@@ -1,7 +1,6 @@
-from reqflow.rest.client import Client
-from reqflow.rest.fluent_api import given
+from reqflow import Client, given
 from httpx._models import Headers
-from reqflow.rest.assertions import equal_to
+from reqflow.assertions import equal_to
 
 client = Client(base_url="https://httpbin.org")
 

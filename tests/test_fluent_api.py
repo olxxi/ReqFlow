@@ -1,6 +1,7 @@
-from reqflow.rest.client import Client
-from reqflow.rest.fluent_api import given, Given
-from reqflow.rest.assertions import is_, contains_string, equal_to
+from reqflow import Client, given
+
+from reqflow.fluent_api import Given
+from reqflow.assertions import is_, contains_string, equal_to
 from reqflow.response.response import UnifiedResponse
 import pytest
 from unittest.mock import Mock

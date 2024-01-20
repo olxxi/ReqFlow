@@ -5,8 +5,8 @@ setup(
     version='1.0.0-alpha',
     packages=find_packages(),
     install_requires=[
-        'httpx>=0.26.0'
-        'jsonpath-ng>=1.6.1'
+        'httpx>=0.26.0',
+        'jsonpath-ng>=1.6.1',
         'pydantic>=2.5.3'
     ],
     # Metadata

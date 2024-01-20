@@ -1,7 +1,6 @@
 import pytest
 
-from reqflow.rest.client import Client
-from reqflow.rest.fluent_api import given
+from reqflow import Client, given
 
 client = Client(base_url="https://httpbin.org")
 

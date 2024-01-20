@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 import pytest
 
-from reqflow.rest.fluent_api import given, Client
+from reqflow import given, Client
 
 client = Client(base_url="https://httpbin.org")
 
