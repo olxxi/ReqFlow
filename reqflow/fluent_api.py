@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from pydantic import ValidationError
 import base64
 
+import os
+
 
 def given(client: Client):
     """
@@ -38,6 +40,7 @@ class Given:
         self.request_headers = {}
         self.request_cookies = {}
         self.json = None
+        self.files = {}
 
     def query_param(self, key: str, value: Any):
         """
@@ -106,6 +109,20 @@ class Given:
         self.json = json
         return self
 
+    def file_upload(self, field_name: str, file_path: str):
+        """
+        Sets the file to upload for the request.
+        Args:
+            field_name (str): The name of the form field the file is associated with.
+            file_path (str): The path to the file to be uploaded.
+
+        Returns:
+            Given: The instance of the Given class for chaining.
+        """
+        with open(file_path, 'rb') as f:
+            self.files[field_name] = (os.path.basename(file_path), f.read())
+        return self
+
     def when(self, method: str, url: str):
         """
         Transitions from the Given stage to the When stage, where the request is made.
@@ -118,7 +135,7 @@ class Given:
             When: The instance of the When class.
         """
         return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json,
-                    cookies=self.request_cookies)
+                    cookies=self.request_cookies, files=self.files)
 
 
 class When:
@@ -128,7 +145,7 @@ class When:
 
     def __init__(self, client: Client, method: str, url: str, params: Optional[Dict[str, Any]] = None,
                  headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None,
-                 cookies: Optional[Dict[str, Any]] = None):
+                 cookies: Optional[Dict[str, Any]] = None, files: Optional[Dict[str, Any]] = None):
         """
         Initializes the When class with the details of the request to be made.
 
@@ -147,6 +164,7 @@ class When:
         self.headers = headers or {}
         self.cookies = cookies or {}
         self.json = json
+        self.files = files
 
     def with_auth(self, username: str, password: str):
         """
@@ -199,7 +217,8 @@ class When:
             Then: The instance of the Then class with the response from the request.
         """
         response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
-                                    json=self.json, cookies=self.cookies, redirect=follow_redirects)
+                                    json=self.json, cookies=self.cookies, redirect=follow_redirects,
+                                    files=self.files)
         return Then(response, self.client)
 
 

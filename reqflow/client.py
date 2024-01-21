@@ -13,17 +13,20 @@ class Client:
     def send(
         self,
         method: str,
-        url: str,
+        url: str = "",
         params: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, Any]] = None,
         cookies: Optional[Dict[str, Any]] = None,
         json: Optional[Any] = None,
         redirect: Optional[bool] = False,
+        files: Optional[Dict[str, Any]] = None,
     ) -> UnifiedResponse:
         start_time = time.time()
         full_url = f"{self.base_url}{url}"
+
         http_response = self.http_client.request(
-            method, full_url, params=params, headers=headers, json=json, cookies=cookies, follow_redirects=redirect
+            method, full_url, params=params, headers=headers, json=json, cookies=cookies, follow_redirects=redirect,
+            files=files
         )
 
         response_time = time.time() - start_time
