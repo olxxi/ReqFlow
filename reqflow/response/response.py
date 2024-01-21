@@ -11,7 +11,12 @@ class UnifiedResponse:
         self.response_time = response_time
         self._raw_body = http_response.content
         self.response_type = response_type
-        self.cookies = http_response.cookies
+
+        try:
+            self.cookies = http_response.cookies
+        except (RuntimeError, AttributeError):
+            self.cookies = None
+
         try:
             self.body = http_response.json()
         except JSONDecodeError:
