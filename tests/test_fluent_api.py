@@ -63,6 +63,7 @@ def test_get_body():
     # Test that get_body returns None if the response body is not valid JSON
     http_response_mock = Mock()
     http_response_mock.content = b"not json"
+    http_response_mock.headers = {'Content-Type': 'application/json'}
     response = UnifiedResponse(http_response_mock)
     then = Given(client_t).when("GET", "/json").then()
     body = then.get_body()

@@ -9,6 +9,6 @@ def test_json():
 
 
 def test_text():
-    http_response = httpx.Response(200, content=b"foo bar")
+    http_response = httpx.Response(200, content=b"foo bar", headers={'Content-Type': 'text/plain'})
     response = UnifiedResponse(http_response)
     assert response.text == "foo bar"
