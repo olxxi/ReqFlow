@@ -3,7 +3,8 @@
 ReqFlow is a Python library designed for efficient and intuitive API testing. 
 ReqFlow offers a fluent and flexible interface for crafting and validating HTTP requests, 
 making API testing both straightforward and adaptable. While it make sense to use standard approaches for a Python API
-testing, ReqFlow reduces the entry barrier for beginners and allows for more advanced use cases. 
+testing, ReqFlow reduces the entry barrier for beginners and allows for more advanced use cases with RestAssured-like
+approach. 
 
 ### Features
 

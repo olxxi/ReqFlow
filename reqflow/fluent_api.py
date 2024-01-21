@@ -35,7 +35,7 @@ class Given:
         """
         self.client = client
         self.params = {}
-        self.headers = {}
+        self.request_headers = {}
         self.json = None
 
     def query_param(self, key: str, value: Any):
@@ -63,7 +63,7 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
-        self.headers[key] = value
+        self.request_headers[key] = value
         return self
 
     def headers(self, headers: Dict[str, Any]):
@@ -76,7 +76,7 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
-        self.headers = headers
+        self.request_headers = headers
         return self
 
     def body(self, json: Any):
@@ -103,7 +103,7 @@ class Given:
         Returns:
             When: The instance of the When class.
         """
-        return When(self.client, method, url, params=self.params, headers=self.headers, json=self.json)
+        return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json)
 
 
 class When:
