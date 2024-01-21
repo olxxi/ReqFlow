@@ -160,3 +160,4 @@ cython_debug/
 .idea/
 
 .pypirc
+tests/img/download.png

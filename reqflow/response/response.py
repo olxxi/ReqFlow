@@ -11,16 +11,20 @@ class UnifiedResponse:
         self.response_time = response_time
         self._raw_body = http_response.content
         self.response_type = response_type
+        self.content_type = http_response.headers.get('Content-Type', '')
 
         try:
             self.cookies = http_response.cookies
         except (RuntimeError, AttributeError):
             self.cookies = None
 
-        try:
+        if 'application/json' in self.content_type:
             self.body = http_response.json()
-        except JSONDecodeError:
-            self.body = None  # Set to None if it's not a valid JSON
+        elif 'text/' in self.content_type:
+            self.body = http_response.text
+        else:
+            # For binary data
+            self.body = http_response.content
 
     @property
     def content(self):

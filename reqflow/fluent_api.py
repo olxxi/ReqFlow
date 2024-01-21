@@ -123,7 +123,7 @@ class Given:
             self.files[field_name] = (os.path.basename(file_path), f.read())
         return self
 
-    def when(self, method: str, url: str):
+    def when(self, method: str, url: str = ""):
         """
         Transitions from the Given stage to the When stage, where the request is made.
 
@@ -423,6 +423,30 @@ class Then:
             Dict[str, Any]: A dictionary of all cookies in the response.
         """
         return dict(self.response.cookies)
+
+    def save_response_to_file(self, file_path):
+        """
+        Saves the response content to a specified file. Useful for downloading files.
+
+        Args:
+            file_path (str): The path where the response content should be saved.
+
+        Returns:
+            Then: The instance of the Then class.
+        """
+
+        content_type = self.response.headers.get('Content-Type', '')
+
+        try:
+            with open(file_path, 'wb') as file:
+                if 'text' in content_type or 'json' in content_type:
+                    file.write(self.response.content.decode('utf-8'))
+                else:
+                    file.write(self.response.content)
+        except IOError as e:
+            raise Exception(f"Error saving file: {e}")
+
+        return self
 
     def then(self):
         """
