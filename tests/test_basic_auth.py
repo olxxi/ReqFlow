@@ -1,17 +1,17 @@
 from reqflow.client import Client
 from reqflow.fluent_api import given
-from reqflow.assertions import is_
+from reqflow.assertions import equal_to
 
 client = Client(base_url="https://httpbin.org")
 
 
 def test_basic_auth_successful():
     given(client).when("GET", "/basic-auth/user/passwd").with_auth("user", "passwd")\
-        .then().status_code(200).assert_body("authenticated", is_(True)).assert_body("user", is_("user"))
+        .then().status_code(200).assert_body("authenticated", equal_to(True)).assert_body("user", equal_to("user"))
 
 def test_basic_hidden_auth_successful():
     given(client).when("GET", "/hidden-basic-auth/user/passwd").with_auth("user", "passwd")\
-        .then().status_code(200).assert_body("authenticated", is_(True)).assert_body("user", is_("user"))
+        .then().status_code(200).assert_body("authenticated", equal_to(True)).assert_body("user", equal_to("user"))
 
 
 def test_basic_auth_unsuccessful():

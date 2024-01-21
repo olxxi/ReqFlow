@@ -1,7 +1,7 @@
 from reqflow import Client, given
 
 from reqflow.fluent_api import Given
-from reqflow.assertions import is_, contains_string, equal_to
+from reqflow.assertions import equal_to, contains_string, equal_to
 from reqflow.response.response import UnifiedResponse
 import pytest
 from unittest.mock import Mock
@@ -41,13 +41,13 @@ def test_contains_string_assertion():
 def test_is_assertion():
     payload = {"foo": "bar"}
     given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))\
-        .assert_body("json.foo", is_("bar"))
+        .assert_body("json.foo", equal_to("bar"))
 
     payload = {"foo": 123}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", is_(123))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to(123))
 
     payload = {"foo": True}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", is_(True))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to(True))
 
 
 def test_get_body():
