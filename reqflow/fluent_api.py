@@ -424,7 +424,7 @@ class Then:
         """
         return dict(self.response.cookies)
 
-    def save_response_to_file(self, file_path):
+    def save_response_to_file(self, file_path: str):
         """
         Saves the response content to a specified file. Useful for downloading files.
 
@@ -434,15 +434,17 @@ class Then:
         Returns:
             Then: The instance of the Then class.
         """
-
         content_type = self.response.headers.get('Content-Type', '')
 
         try:
-            with open(file_path, 'wb') as file:
-                if 'text' in content_type or 'json' in content_type:
-                    file.write(self.response.content.decode('utf-8'))
-                else:
-                    file.write(self.response.content)
+            if 'text' in content_type or 'application/json' in content_type:
+                with open(file_path, 'w', encoding='utf-8') as file:
+                    file.write(self.response.json)
+            else:
+                with open(file_path, 'wb') as file:
+                    file.write(
+                        self.response.body if isinstance(self.response.body, bytes)
+                        else self.response.json.encode('utf-8'))
         except IOError as e:
             raise Exception(f"Error saving file: {e}")
 

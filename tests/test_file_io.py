@@ -4,13 +4,28 @@ import os
 
 def test_file_upload():
     client = Client(base_url="https://ps.uci.edu/~franklin")
-    given(client).file_upload("userfile", "img/test.png").when("POST", "/doc/file_upload.html").then().status_code(200)
+    given(client).file_upload("userfile", "data/test.png").when("POST", "/doc/file_upload.html").then().status_code(200)
 
 
-def test_file_download():
+def test_file_download_png():
     client = Client(base_url=
                     "https://file-examples.com/storage/fe793dd9be65a9b389251ea/2017/10/file_example_PNG_1MB.png")
 
-    given(client).when("GET").then().status_code(200).save_response_to_file("img/download.png")
-    os.remove("img/download.png")
+    given(client).when("GET").then().status_code(200).save_response_to_file("data/download.png")
+    os.remove("data/download.png")
 
+
+def test_file_download_pdf():
+    client = Client(base_url=
+                    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+
+    given(client).when("GET").then().status_code(200).save_response_to_file("data/download.pdf")
+    os.remove("data/download.pdf")
+
+
+def test_file_download_txt():
+    client = Client(base_url=
+                    "https://filesamples.com/samples/document/txt/sample3.txt")
+
+    given(client).when("GET").then().status_code(200).save_response_to_file("data/download.txt")
+    os.remove("data/download.txt")
