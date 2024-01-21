@@ -18,11 +18,12 @@ class Client:
         headers: Optional[Dict[str, Any]] = None,
         cookies: Optional[Dict[str, Any]] = None,
         json: Optional[Any] = None,
+        redirect: Optional[bool] = False,
     ) -> UnifiedResponse:
         start_time = time.time()
         full_url = f"{self.base_url}{url}"
         http_response = self.http_client.request(
-            method, full_url, params=params, headers=headers, json=json, cookies=cookies
+            method, full_url, params=params, headers=headers, json=json, cookies=cookies, follow_redirects=redirect
         )
 
         response_time = time.time() - start_time

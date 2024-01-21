@@ -191,7 +191,7 @@ class When:
         self.headers[key] = value
         return self
 
-    def then(self):
+    def then(self, follow_redirects: bool = False):
         """
         Transitions from the When stage to the Then stage, where the response is handled.
 
@@ -199,7 +199,7 @@ class When:
             Then: The instance of the Then class with the response from the request.
         """
         response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
-                                    json=self.json, cookies=self.cookies)
+                                    json=self.json, cookies=self.cookies, redirect=follow_redirects)
         return Then(response, self.client)
 
 
