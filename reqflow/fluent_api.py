@@ -36,6 +36,7 @@ class Given:
         self.client = client
         self.params = {}
         self.request_headers = {}
+        self.request_cookies = {}
         self.json = None
 
     def query_param(self, key: str, value: Any):
@@ -50,6 +51,19 @@ class Given:
             Given: The instance of the Given class.
         """
         self.params[key] = value
+        return self
+
+    def cookies(self, cookies: Dict[str, Any]):
+        """
+        Adds multiple cookies to the request.
+
+        Args:
+            cookies (Dict[str, Any]): A dictionary of cookies to add.
+
+        Returns:
+            Given: The instance of the Given class.
+        """
+        self.request_cookies = cookies
         return self
 
     def header(self, key: str, value: Any):
@@ -103,7 +117,8 @@ class Given:
         Returns:
             When: The instance of the When class.
         """
-        return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json)
+        return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json,
+                    cookies=self.request_cookies)
 
 
 class When:
@@ -111,7 +126,9 @@ class When:
     Represents the When stage of the request where the actual request is made.
     """
 
-    def __init__(self, client: Client, method: str, url: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None):
+    def __init__(self, client: Client, method: str, url: str, params: Optional[Dict[str, Any]] = None,
+                 headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None,
+                 cookies: Optional[Dict[str, Any]] = None):
         """
         Initializes the When class with the details of the request to be made.
 
@@ -128,6 +145,7 @@ class When:
         self.url = url
         self.params = params or {}
         self.headers = headers or {}
+        self.cookies = cookies or {}
         self.json = json
 
     def with_auth(self, username: str, password: str):
@@ -180,7 +198,8 @@ class When:
         Returns:
             Then: The instance of the Then class with the response from the request.
         """
-        response = self.client.send(self.method, self.url, params=self.params, headers=self.headers, json=self.json)
+        response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
+                                    json=self.json, cookies=self.cookies)
         return Then(response, self.client)
 
 
@@ -364,19 +383,27 @@ class Then:
             f"Response time {self.response.response_time} exceeds the maximum expected time {max_time}"
         return self
 
-    def get_cookies(self):
+    def assert_cookie(self, cookie_name: str, expected_value: Any):
         """
-        Retrieves cookies from the response.
+        Asserts that a specific cookie matches the expected value.
 
-        This method accesses the underlying HTTP client's cookie jar and extracts the cookies as a dictionary.
+        Args:
+            cookie_name (str): The name of the cookie to assert.
+            expected_value (Any): The expected value of the cookie.
 
         Returns:
-            Dict[str, Any]: A dictionary representing the cookies received in the response, where the key is
-            the cookie name.
+            Then: The instance of the Then class.
         """
-        cookies_jar = self.client.http_client.cookies.jar
-        cookies_dict = cookies_jar.__dict__.get('_cookies')
-        return cookies_dict
+        self.response.assert_cookie(cookie_name, expected_value)
+        return self
+
+    def get_cookies(self):
+        """
+        Retrieves all cookies from the response.
+        Returns:
+            Dict[str, Any]: A dictionary of all cookies in the response.
+        """
+        return dict(self.response.cookies)
 
     def then(self):
         """

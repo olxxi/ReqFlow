@@ -11,6 +11,7 @@ class UnifiedResponse:
         self.response_time = response_time
         self._raw_body = http_response.content
         self.response_type = response_type
+        self.cookies = http_response.cookies
         try:
             self.body = http_response.json()
         except JSONDecodeError:
@@ -63,4 +64,7 @@ class UnifiedResponse:
         assertion_func(actual_value)
         return self
 
-
+    def assert_cookie(self, cookie_name: str, assertion_func: Callable[[Any], None]) -> "UnifiedResponse":
+        actual_value = self.cookies.get(cookie_name)
+        assertion_func(actual_value)
+        return self
