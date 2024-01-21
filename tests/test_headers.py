@@ -17,7 +17,7 @@ def test_get_header():
 
 def test_request_header():
     given(client).header("Authorization", "Bearer TOKEN").when("GET", "/headers")\
-        .then().body("headers.Authorization", equal_to("Bearer TOKEN"))
+        .then().assert_body("headers.Authorization", equal_to("Bearer TOKEN"))
 
 
 def test_request_headers():
@@ -26,5 +26,5 @@ def test_request_headers():
              'test_header': 'test_value'})\
         .when("GET", "/headers")\
         .then()\
-        .body("headers.Authorization", equal_to("Bearer TOKEN"))\
-        .body("headers.Test-Header", equal_to("test_value"))
+        .assert_body("headers.Authorization", equal_to("Bearer TOKEN"))\
+        .assert_body("headers.Test-Header", equal_to("test_value"))

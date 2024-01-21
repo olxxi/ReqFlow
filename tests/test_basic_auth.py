@@ -7,11 +7,11 @@ client = Client(base_url="https://httpbin.org")
 
 def test_basic_auth_successful():
     given(client).when("GET", "/basic-auth/user/passwd").with_auth("user", "passwd")\
-        .then().status_code(200).body("authenticated", is_(True)).body("user", is_("user"))
+        .then().status_code(200).assert_body("authenticated", is_(True)).assert_body("user", is_("user"))
 
 def test_basic_hidden_auth_successful():
     given(client).when("GET", "/hidden-basic-auth/user/passwd").with_auth("user", "passwd")\
-        .then().status_code(200).body("authenticated", is_(True)).body("user", is_("user"))
+        .then().status_code(200).assert_body("authenticated", is_(True)).assert_body("user", is_("user"))
 
 
 def test_basic_auth_unsuccessful():

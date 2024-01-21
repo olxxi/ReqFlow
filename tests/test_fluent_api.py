@@ -10,22 +10,22 @@ client = Client(base_url="https://httpbin.org")
 
 
 def test_get_request():
-    given(client).when("GET", "/get?foo=bar").then().status_code(200).body("args.foo", equal_to("bar"))
+    given(client).when("GET", "/get?foo=bar").then().status_code(200).assert_body("args.foo", equal_to("bar"))
 
 
 def test_post_request():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).body("json.foo", equal_to("bar"))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))
 
 
 def test_put_request():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("PUT", "/put").then().status_code(200).body("json.foo", equal_to("bar"))
+    given(client).body(payload).when("PUT", "/put").then().status_code(200).assert_body("json.foo", equal_to("bar"))
 
 
 def test_patch_request():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("PATCH", "/patch").then().status_code(200).body("json.foo", equal_to("bar"))
+    given(client).body(payload).when("PATCH", "/patch").then().status_code(200).assert_body("json.foo", equal_to("bar"))
 
 
 def test_delete_request():
@@ -34,20 +34,20 @@ def test_delete_request():
 
 def test_contains_string_assertion():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).body("json.foo", equal_to("bar"))\
-        .body("json.foo", contains_string("ar"))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))\
+        .assert_body("json.foo", contains_string("ar"))
 
 
 def test_is_assertion():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).body("json.foo", equal_to("bar"))\
-        .body("json.foo", is_("bar"))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))\
+        .assert_body("json.foo", is_("bar"))
 
     payload = {"foo": 123}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).body("json.foo", is_(123))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", is_(123))
 
     payload = {"foo": True}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).body("json.foo", is_(True))
+    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", is_(True))
 
 
 def test_get_body():

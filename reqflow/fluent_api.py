@@ -264,7 +264,7 @@ class Then:
             f"Status code {self.response.status_code} is not between {min_status_code} and {max_status_code}"
         return self
 
-    def body(self, json_path: str, expected_value: Any):
+    def assert_body(self, json_path: str, expected_value: Any):
         """
         Asserts that a specific part of the response body matches the expected value.
 
