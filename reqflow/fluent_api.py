@@ -160,8 +160,11 @@ class Given:
         Returns:
             Given: The instance of the Given class for chaining.
         """
-        with open(file_path, 'rb') as f:
-            self.files[field_name] = (os.path.basename(file_path), f.read())
+        try:
+            with open(file_path, 'rb') as f:
+                self.files[field_name] = (os.path.basename(file_path), f.read())
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File {file_path} not found")
         return self
 
     def when(self, method: str, url: Optional[str] = ""):
@@ -460,7 +463,11 @@ class Then:
         Returns:
             str: The value of the specified header.
         """
-        return self.response.headers[header_name]
+        try:
+            header = self.response.headers[header_name]
+        except KeyError:
+            raise KeyError(f"Header {header_name} not found in response")
+        return header
 
     def get_headers(self):
         """
