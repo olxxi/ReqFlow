@@ -9,7 +9,7 @@ def test_file_upload():
 
 def test_file_download_png():
     client = Client(base_url=
-                    "https://file-examples.com/storage/fe793dd9be65a9b389251ea/2017/10/file_example_PNG_1MB.png")
+                    "https://download.samplelib.com/png/sample-boat-400x300.png")
 
     given(client).when("GET").then().status_code(200).save_response_to_file("data/download.png")
     os.remove("data/download.png")

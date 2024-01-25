@@ -58,9 +58,9 @@ def test_greater_less_then():
 
 
 def test_contains_in_list():
-    given(client).body(payload).when('POST', "/post").then().assert_body('json.list_int', contains_in_list(1))\
-        .assert_body('json.list_str', contains_in_list('a')) \
-        .assert_body('json.list_bool', contains_in_list(True))
+    given(client).body(payload).when('POST', "/post").then().assert_body('json.list_int', list_contains(1))\
+        .assert_body('json.list_str', list_contains('a')) \
+        .assert_body('json.list_bool', list_contains(True))
 
 
 def test_is_none():

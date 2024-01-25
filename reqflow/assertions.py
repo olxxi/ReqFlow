@@ -4,8 +4,15 @@ import re
 def contains_string(expected):
     """
     Asserts that the actual value contains the provided string.
+
     Args:
         expected: The string to check for in the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import contains_string
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET", "/get?foo=bar").then().assert_body("url", contains_string("foo=bar"))
 
     Returns:
         An assertion function that checks if the actual value contains the provided string.
@@ -18,8 +25,16 @@ def contains_string(expected):
 def equal_to(expected):
     """
     Asserts that the actual value is equal to the provided value.
+
     Args:
         expected: The value to check for equality against the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import equal_to
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET", "/get?foo=bar").then()\
+        >>>              .assert_body("url", equal_to("https://httpbin.org/get?foo=bar"))
 
     Returns:
         An assertion function that checks if the actual value is equal to the provided value.
@@ -32,8 +47,16 @@ def equal_to(expected):
 def not_equal_to(expected):
     """
     Asserts that the actual value is not equal to the provided value.
+
     Args:
         expected: The value to check for inequality against the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import not_equal_to
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET", "/get?foo=bar").then()\
+        >>>              .assert_body("url", not_equal_to("https://httpbin.org/get?foo=bar"))
 
     Returns:
         An assertion function that checks if the actual value is not equal to the provided value.
@@ -46,8 +69,17 @@ def not_equal_to(expected):
 def greater_than(expected):
     """
     Asserts that the actual value is greater than the provided value.
+
     Args:
         expected: The value to check for greater than the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import greater_than
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then()\
+        >>>              .assert_body("some_value", greater_than("777"))
+
 
     Returns:
         An assertion function that checks if the actual value is greater than the provided value.
@@ -60,8 +92,16 @@ def greater_than(expected):
 def less_than(expected):
     """
     Asserts that the actual value is less than the provided value.
+
     Args:
         expected: The value to check for less than the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import greater_than
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then()\
+        >>>              .assert_body("some_value", less_than("777"))
 
     Returns:
         An assertion function that checks if the actual value is less than the provided value.
@@ -72,11 +112,19 @@ def less_than(expected):
     return assertion
 
 
-def contains_in_list(expected):
+def list_contains(expected):
     """
-    Asserts that the actual value is contained in the provided list.
+    Asserts that the actual value is contained in the response array list.
+
     Args:
         expected: The list to check for the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import list_contains
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then()\
+        >>>              .assert_body("json.some_array", list_contains(["foo", "bar", "baz"]))
 
     Returns:
         An assertion function that checks if the actual value is contained in the provided list.
@@ -89,6 +137,13 @@ def contains_in_list(expected):
 def is_none():
     """
     Asserts that the actual value is None.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import is_none
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then().assert_body("json.some_value", is_none())
+
     Returns:
         An assertion function that checks if the actual value is None.
     """
@@ -100,6 +155,13 @@ def is_none():
 def is_not_none():
     """
     Asserts that the actual value is not None.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import is_none
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then().assert_body("json.some_value", is_not_none())
+
     Returns:
         An assertion function that checks if the actual value is not None.
     """
@@ -114,6 +176,12 @@ def matches_regex(pattern):
 
     Args:
         pattern: A regex pattern to match against the actual value.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import matches_regex
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then().assert_body("json.some_value", matches_regex(r"^\d{3}$"))
 
     Returns:
         An assertion function that checks if the actual value matches the provided regex pattern.
@@ -131,6 +199,12 @@ def and_(*assertions):
     Args:
         *assertions: A variable number of assertion functions.
 
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import and_, greater_than, less_than
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then().assert_body("json.some_value", and_(greater_than(1), less_than(100)))
+
     Returns:
         A combined assertion function that checks all provided assertions.
     """
@@ -146,6 +220,12 @@ def or_(*assertions):
 
     Args:
         *assertions: A variable number of assertion functions.
+
+    Examples:
+        >>> from reqflow import Client, given
+        >>> from reqflow.assertions import or_, greater_than, less_than
+        >>> client = Client(base_url="https://httpbin.org")
+        >>> given(client).when("GET").then().assert_body("json.some_value", or_(greater_than(1), less_than(100)))
 
     Returns:
         A combined assertion function that checks if any of the provided assertions pass.

@@ -5,7 +5,15 @@ from typing import Any, Callable
 
 
 class UnifiedResponse:
+    """
+    A unified response object.
+    """
     def __init__(self, http_response: httpx.Response, response_time: float = None, response_type: str = 'REST'):
+        """
+        Args:
+            http_response (httpx.Response):
+            response_time (float):
+        """
         self.status_code = http_response.status_code
         self.headers = http_response.headers
         self.response_time = response_time
@@ -41,12 +49,6 @@ class UnifiedResponse:
         if self.body is not None:
             return str(self.body)
         return self._raw_body.decode('utf-8')
-
-    # @property
-    # def data(self):
-    #     if isinstance(self.body, dict):
-    #         return self.body.get('data')
-    #     return None
 
     @property
     def errors(self):

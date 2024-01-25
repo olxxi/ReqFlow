@@ -12,29 +12,33 @@ import os
 
 def given(client: Client):
     """
-    Initializes the Given stage with a client (httpx client).
+    Initializes the Given stage with a client.
 
     Args:
         client (Client): The client instance to use for making the request.
 
+    Examples:
+        >>> from reqflow import given, Client
+        >>> client = Client(base_url="https://url.com")
+        >>> given(client).when("GET", "/path").then().assert_status_code(200)
+
     Returns:
-        Given: An instance of the Given class initialized with the provided client.
+        Given (class): An instance of the Given class initialized with the provided client.
     """
     return Given(client)
 
 
 class Given:
     """
-    Represents the Given stage of the request where you can specify parameters, headers, and the body of the request.
+    Represents the Given stage of the request where you can specify parameters, headers, cookies
+    and the body of the request.
+
+    Args:
+        client (Client): The client instance to use for making the request.
+
     """
 
     def __init__(self, client: Client):
-        """
-        Initializes the Given class with a client.
-
-        Args:
-            client (Client): The client instance to use for making the request.
-        """
         self.client = client
         self.params = {}
         self.request_headers = {}
@@ -50,6 +54,11 @@ class Given:
             key (str): The key of the query parameter.
             value (Any): The value of the query parameter.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then()...
+
         Returns:
             Given: The instance of the Given class.
         """
@@ -62,6 +71,12 @@ class Given:
 
         Args:
             cookies (Dict[str, Any]): A dictionary of cookies to add.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> cks = {"cookie1": "value1", "cookie2": "value2"}
+            >>> given(client).cookies(cks).when("GET", "/cookies").then()...
 
         Returns:
             Given: The instance of the Given class.
@@ -77,6 +92,11 @@ class Given:
             key (str): The key of the header.
             value (Any): The value of the header.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).header("Authorization", "Bearer TOKEN").when("GET", "/headers").then()...
+
         Returns:
             Given: The instance of the Given class.
         """
@@ -89,6 +109,14 @@ class Given:
 
         Args:
             headers (Dict[str, Any]): A dictionary of headers to add.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> HEADERS = {'Authorization': 'Bearer TOKEN', 'test_header': 'test_value'}
+            >>> given(client).headers(HEADERS)\
+                .when("GET", "/headers")\
+                .then()...
 
         Returns:
             Given: The instance of the Given class.
@@ -103,6 +131,11 @@ class Given:
         Args:
             json (Any): The JSON body to set for the request.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).body({"key": "value"}).when("POST", "/post").then()...
+
         Returns:
             Given: The instance of the Given class.
         """
@@ -116,6 +149,14 @@ class Given:
             field_name (str): The name of the form field the file is associated with.
             file_path (str): The path to the file to be uploaded.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> given(client).file_upload("userfile", "data/test.png")
+            >>>     .when("POST", "/doc/file_upload.html").then()...
+
+        Note:
+            `field_name` must be the same as the name of the form field in the request.
+
         Returns:
             Given: The instance of the Given class for chaining.
         """
@@ -123,13 +164,21 @@ class Given:
             self.files[field_name] = (os.path.basename(file_path), f.read())
         return self
 
-    def when(self, method: str, url: str = ""):
+    def when(self, method: str, url: Optional[str] = ""):
         """
         Transitions from the Given stage to the When stage, where the request is made.
 
         Args:
             method (str): The HTTP method to use.
             url (str): The URL to send the request to.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then()...
+
+        Note:
+            If the `url` is not provided, the `url` provided in the Client instance will be used.
 
         Returns:
             When: The instance of the When class.
@@ -143,7 +192,7 @@ class When:
     Represents the When stage of the request where the actual request is made.
     """
 
-    def __init__(self, client: Client, method: str, url: str, params: Optional[Dict[str, Any]] = None,
+    def __init__(self, client: Client, method: str, url: Optional[str] = "", params: Optional[Dict[str, Any]] = None,
                  headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None,
                  cookies: Optional[Dict[str, Any]] = None, files: Optional[Dict[str, Any]] = None):
         """
@@ -174,6 +223,11 @@ class When:
             username (str): The username for basic auth.
             password (str): The password for basic auth.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).with_auth("user", "pass").when("GET", "/basic-auth/user/pass").then()...
+
         Returns:
             When: The instance of the When class.
         """
@@ -188,6 +242,12 @@ class When:
 
         Args:
             token (str): The OAuth2 token to use for auth.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> token = "some_token"
+            >>> given(client).with_oauth2(token).when("GET", "/bearer").then()...
 
         Returns:
             When: The instance of the When class.
@@ -213,12 +273,18 @@ class When:
         """
         Transitions from the When stage to the Then stage, where the response is handled.
 
+        Args:
+            follow_redirects (bool): httpx parameter to follow redirects or not. Defaults to False.
+
+        Note:
+            The actual request is made when this method is called.
+
         Returns:
             Then: The instance of the Then class with the response from the request.
         """
-        response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
-                                    json=self.json, cookies=self.cookies, redirect=follow_redirects,
-                                    files=self.files)
+        response = self.client._send(self.method, self.url, params=self.params, headers=self.headers,
+                                     json=self.json, cookies=self.cookies, redirect=follow_redirects,
+                                     files=self.files)
         return Then(response, self.client)
 
 
@@ -242,6 +308,13 @@ class Then:
         """
         Retrieves the response object.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).when("GET", "/get").then().get_response()
+            >>> r.status_code
+            >>> 200
+
         Returns:
             UnifiedResponse: The response from the request.
         """
@@ -256,6 +329,21 @@ class Then:
 
         Raises:
             AssertionError: If the response data does not match the expected model.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> from pydantic import BaseModel
+            >>>
+            >>> client = Client(base_url="https://httpbin.org")
+            >>>
+            >>> class Data(BaseModel):
+            >>>     url: str
+            >>>     args: dict
+            >>>     headers: dict
+            >>>     origin: str
+            >>>     method: str
+            >>>     ...
+            >>> given(client).when("GET", "/get").then().validate_data(Data)
 
         Returns:
             Then: The instance of the Then class.
@@ -277,6 +365,11 @@ class Then:
         Raises:
             AssertionError: If the response status code does not match the expected status code.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().status_code(200)
+
         Returns:
             Then: The instance of the Then class.
         """
@@ -294,6 +387,11 @@ class Then:
 
         Raises:
             AssertionError: If the response status code is not within the specified range.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().status_code_is_between(200, 299)
 
         Returns:
             Then: The instance of the Then class.
@@ -313,6 +411,18 @@ class Then:
         Raises:
             ValueError: If the JSONPath does not match any elements in the JSON response.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> from reqflow.assertions import equal_to
+            >>>
+            >>> client = Client(base_url="https://httpbin.org")
+            >>>
+            >>> payload = {"foo": "bar"}
+            >>> given(client).body(payload).when("POST", "/post").then().assert_body("json.foo", equal_to("bar"))
+
+        Note:
+            The `jsonpath-ng` expression is evaluated against the response body as a JSON object.
+
         Returns:
             Then: The instance of the Then class.
         """
@@ -322,6 +432,11 @@ class Then:
     def get_body(self):
         """
         Retrieves the content of the response body.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).when("GET", "/get").then().get_body()
 
         Returns:
             Any: The content of the response body.
@@ -335,6 +450,13 @@ class Then:
         Args:
             header_name (str): The name of the header to retrieve.
 
+        Examples
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).when("GET", "/get").then().get_header("Content-Type")
+            >>> r
+            >>> "application/json"
+
         Returns:
             str: The value of the specified header.
         """
@@ -343,6 +465,13 @@ class Then:
     def get_headers(self):
         """
         Retrieves all headers from the response.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).when("GET", "/get").then().get_headers()
+            >>> r
+            >>> {"Content-Type": "application/json", "Content-Length": "123"}
 
         Returns:
             Dict[str, Any]: A dictionary of all headers in the response.
@@ -357,32 +486,16 @@ class Then:
             header_name (str): The name of the header to assert.
             expected_value (Any): The expected value of the header.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> from reqflow.assertions import equal_to
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().assert_header("Content-Type", equal_to("application/json"))
+
         Returns:
             Then: The instance of the Then class.
         """
         self.response.assert_header(header_name, expected_value)
-        return self
-
-    def assert_headers(self, headers: Dict[str, Any], excluded_headers: Optional[Dict[str, Any]] = None):
-        """
-        Asserts that multiple headers in the response match their expected values, except for those explicitly excluded.
-
-        Args:
-            headers (Dict[str, Any]): A dictionary where the key is the header name and the value is the expected
-            header value.
-            excluded_headers (Optional[Dict[str, Any]]): A dictionary of headers to exclude from the assertion.
-            The key is the header name.
-
-        Returns:
-            Then: The instance of the Then class for fluent chaining.
-
-        Raises:
-            AssertionError: If any of the non-excluded headers do not match their expected values.
-        """
-        for header_name, expected_value in headers.items():
-            if excluded_headers and header_name in excluded_headers:
-                continue
-            self.response.assert_header(header_name, expected_value)
         return self
 
     def assert_response_time(self, max_time: float):
@@ -391,6 +504,11 @@ class Then:
 
         Args:
             max_time (float): The maximum expected response time in seconds.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().assert_response_time(1.0)
 
         Returns:
             Then: The instance of the Then class for fluent chaining.
@@ -410,6 +528,13 @@ class Then:
             cookie_name (str): The name of the cookie to assert.
             expected_value (Any): The expected value of the cookie.
 
+        Examples:
+            >>> from reqflow import given, Client
+            >>> from reqflow.assertions import equal_to
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then()\
+            >>>                                      .assert_cookie("chocolate", equal_to("chip"))
+
         Returns:
             Then: The instance of the Then class.
         """
@@ -419,8 +544,13 @@ class Then:
     def get_cookies(self):
         """
         Retrieves all cookies from the response.
+
+        Examples:
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then().get_cookies()
+            >>> {'chocolate': 'chip'}
         Returns:
-            Dict[str, Any]: A dictionary of all cookies in the response.
+            dict: A dictionary of all cookies in the response.
         """
         return dict(self.response.cookies)
 
@@ -430,6 +560,11 @@ class Then:
 
         Args:
             file_path (str): The path where the response content should be saved.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/image/png").then().save_response_to_file("image.png")
 
         Returns:
             Then: The instance of the Then class.
@@ -448,16 +583,4 @@ class Then:
         except IOError as e:
             raise Exception(f"Error saving file: {e}")
 
-        return self
-
-    def then(self):
-        """
-        A placeholder method that simply returns the instance of the Then class.
-
-        This method is typically used at the end of a chain of fluent method calls to signal the end of the chain and
-        can be extended for additional functionality if needed.
-
-        Returns:
-            Then: The instance of the Then class.
-        """
         return self
