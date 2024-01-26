@@ -1,17 +1,24 @@
-# Welcome to MkDocs
+# ReqFlow
+ReqFlow is a lightweight and flexible Python package designed to simplify API testing. 
+Providing an intuitive, fluent interface for crafting and validating HTTP API functionality. 
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+---
 
-## Commands
+### Installation
+Install ReqFlow using pip:
+```bash
+pip install reqflow
+```
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+### Features
+- **Fluent API**: ReqFlow's syntax is designed to be readable and expressive, making your tests easy to write and understand.
+- **Embedded Response Assertions**: Assert of status codes, response bodies, headers, etc.
+- **PyDantic Integration**: Validate reponse bodies agains PyDantic models for robust and flexible data validation.
+- **Extensible and Modular**: ReqFlow is built to be flexible. Extend or customize it to fit your testing needs, 
+whether you're working with RESTful APIs, JSON, XML, or other data formats.
 
-## Project layout
+### Documentation
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+To get started with the fundamentals of ReqFlow, check out the [Quick Start](TBD) page.
+
+For detailed information on each function and feature, check out the [API Reference](TBD) page.

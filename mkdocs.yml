@@ -4,7 +4,7 @@ theme:
   features:
 #    - navigation.tabs
     - navigation.sections
-    - toc.integrate
+    - toc
     - navigation.top
     - search.suggest
     - search.highlight
@@ -31,11 +31,11 @@ theme:
 
 nav:
   - Introduction: index.md
+  - Quick Start: quick_start.md
   - API Reference:
       - Fluent API: fluent_api.md
       - Assertions: assertions.md
-  - User Guide:
-      - "Getting Started": index.md
+
 
 plugins:
 - search
