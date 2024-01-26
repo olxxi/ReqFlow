@@ -59,11 +59,20 @@ hdrs
 >>> {"Content-Type": "application/json", "Content-Length": "1234", ...}
 ```
 
-### Pass query parameters
+### Query parameters
+
 ### Get response/response content
 
 ### Cookies
+
 ### Authentication
+
 ### Assertions
+#### Status Code
+#### Response Body
+#### Response Headers
+#### Response Time
+#### Cookies
+
 ### PyDantic Validation
 ### Upload/Download files (save as any format)
