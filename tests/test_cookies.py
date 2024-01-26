@@ -12,10 +12,12 @@ def test_set_cookies():
 
 
 def test_get_cookie():
-    r = given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then().get_cookies()
+    params = {'chocolate': 'chip', 'peanut': 'butter', 'oatmeal': 'raisin'}
+    r = given(client).query_param(params).when("GET", "/cookies/set").then().get_cookies()
     assert r['chocolate'] == 'chip'
 
 
 def test_assert_cookie():
-    given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then()\
+    params = {'chocolate': 'chip', 'peanut': 'butter', 'oatmeal': 'raisin'}
+    given(client).query_param(params).when("GET", "/cookies/set").then()\
         .assert_cookie('chocolate', equal_to('chip'))

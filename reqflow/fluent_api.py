@@ -46,23 +46,23 @@ class Given:
         self.json = None
         self.files = {}
 
-    def query_param(self, key: str, value: Any):
+    def query_param(self, params: Dict[str, Any]):
         """
         Adds a query parameter to the request.
 
         Args:
-            key (str): The key of the query parameter.
-            value (Any): The value of the query parameter.
+            params (Dict[str, Any]): A dictionary of query parameters to add.
 
         Examples:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
-            >>> r = given(client).query_param('chocolate', 'chip').when("GET", "/cookies/set").then()...
+            >>> params = {'chocolate': 'chip'}
+            >>> r = given(client).query_param(params).when("GET", "/cookies/set").then()...
 
         Returns:
             Given: The instance of the Given class.
         """
-        self.params[key] = value
+        self.params = params
         return self
 
     def cookies(self, cookies: Dict[str, Any]):

@@ -60,6 +60,12 @@ hdrs
 ```
 
 ### Query parameters
+To set up query parameters in the URL, use the `query_param` method:
+
+```python linenums="1"
+PARAMS = {"foo": "bar"}
+given(client).query_param(PARAMS).when("GET", "/get").then()...
+```
 
 ### Get response/response content
 
