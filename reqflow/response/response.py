@@ -14,12 +14,13 @@ class UnifiedResponse:
             http_response (httpx.Response):
             response_time (float):
         """
-        self.status_code = http_response.status_code
-        self.headers = http_response.headers
-        self.response_time = response_time
+        self._status_code = http_response.status_code
+        self._headers = http_response.headers
+        self._response_time = response_time
         self._raw_body = http_response.content
-        self.response_type = response_type
-        self.content_type = http_response.headers.get('Content-Type', '')
+        self._response_type = response_type
+        self._content_type = http_response.headers.get('Content-Type', '')
+        self._encoding = http_response.encoding
 
         try:
             self.cookies = http_response.cookies
@@ -33,6 +34,30 @@ class UnifiedResponse:
         else:
             # For binary data
             self.body = http_response.content
+
+    @property
+    def encoding(self) -> str:
+        return self._encoding
+
+    @property
+    def content_type(self) -> str:
+        return self._content_type
+
+    @property
+    def status_code(self) -> int:
+        return self._status_code
+
+    @property
+    def headers(self) -> dict:
+        return self._headers
+
+    @property
+    def response_type(self) -> str:
+        return self._response_type
+
+    @property
+    def response_time(self) -> float:
+        return self._response_time
 
     @property
     def content(self):
