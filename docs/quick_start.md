@@ -158,7 +158,7 @@ The following embedded assertion functions are available:
 * `and_(*assertion_functions)`
 * `or_(*assertion_functions)`
 
-The list of assertion functions and with the descriptions can be found [here](/assertions).
+The list of assertion functions and with the descriptions can be found [here](../assertions.md).
 
 #### Status Code
 
