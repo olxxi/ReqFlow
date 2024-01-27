@@ -485,6 +485,22 @@ class Then:
         """
         return self.response.headers
 
+    def get_encoding(self):
+        """
+        Retrieves the encoding of the response.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> r = given(client).when("GET", "/get").then().get_encoding()
+            >>> r
+            >>> "utf-8"
+
+        Returns:
+            str: The encoding of the response.
+        """
+        return self.response.encoding
+
     def assert_header(self, header_name: str, expected_value: Any):
         """
         Asserts that a specific header matches the expected value.

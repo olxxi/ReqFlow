@@ -81,3 +81,7 @@ def test_assert_response_time():
 @pytest.mark.xfail(raises=AssertionError)
 def test_assert_response_time_xfailed():
     given(client).when("GET", "/get?foo=bar").then().assert_response_time(0.01)
+
+def test_get_encoding():
+    enc = given(client).when("GET", "/get?foo=bar").then().get_encoding()
+    assert enc == 'utf-8'
