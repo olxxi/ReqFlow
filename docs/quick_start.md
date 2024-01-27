@@ -77,7 +77,7 @@ r
 ```
 
 !!! note
-    The API reference for the `UnifiedResponse` object can be found [here](/response).
+    The API reference for the `UnifiedResponse` object can be found [here](https://olxxi.github.io/ReqFlow/response/).
 
 To retrieve the response content, you can use the `then.().get_content()` method:
 
@@ -158,7 +158,7 @@ The following embedded assertion functions are available:
 * `and_(*assertion_functions)`
 * `or_(*assertion_functions)`
 
-The list of assertion functions and with the descriptions can be found [here](./assertions.md).
+The list of assertion functions and with the descriptions can be found [here](https://olxxi.github.io/ReqFlow/assertions/).
 
 #### Status Code
 
