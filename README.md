@@ -51,3 +51,6 @@ response = (given(client)
 
 print(response)
 ```
+
+### Documentation
+Detailed documentation can be found [here](https://olxxi.github.io/ReqFlow/).
