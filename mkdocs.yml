@@ -1,6 +1,10 @@
 site_name: ReqFlow
+repo_url: https://github.com/olxxi/ReqFlow
+repo_name: olxxi/ReqFlow
 theme:
   name: material
+  icon:
+    repo: fontawesome/brands/github
   features:
 #    - navigation.tabs
     - navigation.sections
