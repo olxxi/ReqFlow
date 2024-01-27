@@ -429,17 +429,17 @@ class Then:
         Returns:
             Then: The instance of the Then class.
         """
-        self.response.assert_json(json_path, expected_value)
+        self.response._assert_json(json_path, expected_value)
         return self
 
-    def get_body(self):
+    def get_content(self):
         """
         Retrieves the content of the response body.
 
         Examples:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
-            >>> r = given(client).when("GET", "/get").then().get_body()
+            >>> r = given(client).when("GET", "/get").then().get_content()
 
         Returns:
             Any: The content of the response body.
@@ -518,7 +518,7 @@ class Then:
         Returns:
             Then: The instance of the Then class.
         """
-        self.response.assert_header(header_name, expected_value)
+        self.response._assert_header(header_name, expected_value)
         return self
 
     def assert_response_time(self, max_time: float):
@@ -561,7 +561,7 @@ class Then:
         Returns:
             Then: The instance of the Then class.
         """
-        self.response.assert_cookie(cookie_name, expected_value)
+        self.response._assert_cookie(cookie_name, expected_value)
         return self
 
     def get_cookies(self):

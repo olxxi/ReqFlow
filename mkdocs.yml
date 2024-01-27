@@ -35,6 +35,7 @@ nav:
   - API Reference:
       - Fluent API: fluent_api.md
       - Assertions: assertions.md
+      - Response: response.md
 
 
 plugins:

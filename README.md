@@ -29,10 +29,12 @@ pip install reqflow
 from reqflow import given, Client
 from pydantic import BaseModel
 
+
 # Define a Pydantic model for response validation
 class ExampleModel(BaseModel):
     name: str
     value: int
+
 
 # Initialize the client
 client = Client(base_url="https://api.example.com")
@@ -45,7 +47,7 @@ response = (given(client)
             .then()
             .validate_data(ExampleModel)
             .status_code(200)
-            .get_body())
+            .get_content())
 
 print(response)
 ```

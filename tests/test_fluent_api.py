@@ -56,7 +56,7 @@ def test_get_body():
     then = given(client).when("GET", "/json").then()
 
     # Test that get_body returns the JSON body of the response
-    body = then.get_body()
+    body = then.get_content()
     assert isinstance(body, dict)
     assert "slideshow" in body
 
@@ -66,7 +66,7 @@ def test_get_body():
     http_response_mock.headers = {'Content-Type': 'application/json'}
     response = UnifiedResponse(http_response_mock)
     then = Given(client_t).when("GET", "/json").then()
-    body = then.get_body()
+    body = then.get_content()
     assert body is not None
 
 

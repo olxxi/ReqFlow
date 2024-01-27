@@ -67,18 +67,178 @@ PARAMS = {"foo": "bar"}
 given(client).query_param(PARAMS).when("GET", "/get").then()...
 ```
 
-### Get response/response content
+### Response operations
+If you want to retrieve the response object, you can use the `then.().get_response()` method:
+
+```python linenums="1"
+r = given(client).when("GET").then().get_response()
+r
+>>> <UnifiedResponse object at 0x108f81es0>
+```
+
+!!! note
+    The API reference for the `UnifiedResponse` object can be found [here](/response).
+
+To retrieve the response content, you can use the `then.().get_content()` method:
+
+```python linenums="1"
+data = given(client).when("GET").then().get_content()
+data
+>>> {...}
+```
 
 ### Cookies
 
+To set a cookie for your request, one can use the `cookie` method trailing the `given` method:
+
+```python linenums="1"
+cks = {"cookie1": "value1", "cookie2": "value2"}
+given(client).cookies(cks).when("GET", "https://httpbin.org/cookies")\
+    .then()...
+```
+
+To retrieve one or multiple response cookies:
+
+```python linenums="1"
+cks = given(client).when("GET", "https://httpbin.org/cookies")\
+    .then().get_cookies()
+ck
+>>> {"cookie1": "value1", "cookie2": "value2"}
+```
+
 ### Authentication
+Reqflow supports the following authentication methods:
+* Basic Authentication
+* OAuth2.0 Authentication
+* API Keys
+
+#### Basic Authentication
+To set up basic authentication, use the `with_auth` method trailing the `when` method:
+
+```python linenums="1"
+given(client)\
+        .when("GET", "/basic-auth/user/passwd").with_auth("user", "passwd")\
+        .then()...
+```
+
+#### OAuth2 Authentication (Bearer Token)
+The Bearer token can be set either explicitly in header or via the `with_oauth2` method:
+
+```python linenums="1"
+given(client).when("GET", "/bearer").with_oauth2(token)\
+        .then()...
+```
+
+#### API Keys
+API Key authorization method represents a wrapper for setting a header with a known name and value in the form of an API key.
+
+```python linenums="1"
+given(client).when("GET", "/bearer").with_api_key(HEADER_NAME, API_KEY)\
+        .then()...
+```
+
 
 ### Assertions
-#### Status Code
-#### Response Body
-#### Response Headers
-#### Response Time
-#### Cookies
 
-### PyDantic Validation
-### Upload/Download files (save as any format)
+ReqFlow provides a set of assertions to validate the response parameters as well as the embedded assertion functions
+to validate the response content.
+
+#### Assertion Functions
+The following embedded assertion functions are available:
+
+* `contains_string()`
+* `equal_to()`
+* `not_equal_to()`
+* `greater_than()`
+* `less_than()`
+* `list_contains()`
+* `is_none()`
+* `is_not_none()`
+* `matches_regex()`
+* `and_(*assertion_functions)`
+* `or_(*assertion_functions)`
+
+The list of assertion functions and with the descriptions can be found [here](/assertions).
+
+#### Status Code
+
+```python linenums="1"
+given(client).when("GET", "/get").then().status_code(200)
+```
+
+#### Response Time
+
+```python linenums="1"
+given(client).when("GET", "/get?foo=bar").then()\
+    .assert_response_time(max_time=0.5)
+```
+
+#### Cookies
+    
+```python linenums="1"
+given(client).query_param(params).when("GET", "/cookies/set").then()\
+        .assert_cookie('chocolate', equal_to('chip'))
+```
+
+#### Headers
+
+```python linenums="1"
+    given(client).when("GET", "/get?foo=bar")\
+        .then().assert_header("Content-Type", equal_to("application/json"))
+```
+
+#### Response Content
+To validate a specific response content value, the `assert_body` can be used along with the embedded assertion functions.
+The parameter search is implemented by using the [`jsonpath-ng`](https://pypi.org/project/jsonpath-ng/) package.
+
+```python linenums="1"
+given(client).when("GET", "/get?foo=bar").then()\
+    .status_code(200).\
+    assert_body("args.foo", equal_to("bar"))
+```
+
+### PyDantic Response Validation
+
+PyDantic integration allows to define precise data structures and use them as a blueprint for the response validation.
+The validation is performed by the `validate_data` method and passing the PyDantic model as a parameter.
+
+```python linenums="1"
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+    username: str
+    email: str
+    address: dict
+    phone: str
+    website: str
+    company: dict
+    
+given(client).when("GET", "/users/1").then()\
+    .status_code(200)\
+    .validate_data(User)
+```
+
+### Upload files
+
+To upload a file to a particular endpoint, use the `file_upload` method specifying the `field_name` and the path to the file:
+
+```python linenums="1"
+given(client).file_upload(field_name="userfile", file_path="data/test.png")\
+    .when("POST", "/doc/file_upload.html")\
+    .then().status_code(200)
+```
+
+!!! note
+    `field_name` must be the same as the name of the form field in the request.
+
+### Download files
+
+To download a file or save the response content to a file with a desired format, use the `save_response_to_file` method specifying the `file_path` parameter:
+
+```python linenums="1"
+given(client).when("GET").then()\
+    .status_code(200)\
+    .save_response_to_file(file_path="file.pdf")
+```

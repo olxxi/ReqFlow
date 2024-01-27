@@ -33,8 +33,7 @@ def equal_to(expected):
         >>> from reqflow import Client, given
         >>> from reqflow.assertions import equal_to
         >>> client = Client(base_url="https://httpbin.org")
-        >>> given(client).when("GET", "/get?foo=bar").then()\
-        >>>              .assert_body("url", equal_to("https://httpbin.org/get?foo=bar"))
+        >>> given(client).when("GET", "/get?foo=bar").then().assert_body("url", equal_to("https://httpbin.org/get?foo=bar"))
 
     Returns:
         An assertion function that checks if the actual value is equal to the provided value.
@@ -55,8 +54,7 @@ def not_equal_to(expected):
         >>> from reqflow import Client, given
         >>> from reqflow.assertions import not_equal_to
         >>> client = Client(base_url="https://httpbin.org")
-        >>> given(client).when("GET", "/get?foo=bar").then()\
-        >>>              .assert_body("url", not_equal_to("https://httpbin.org/get?foo=bar"))
+        >>> given(client).when("GET", "/get?foo=bar").then().assert_body("url", not_equal_to("https://httpbin.org/get?foo=bar"))
 
     Returns:
         An assertion function that checks if the actual value is not equal to the provided value.
@@ -77,8 +75,7 @@ def greater_than(expected):
         >>> from reqflow import Client, given
         >>> from reqflow.assertions import greater_than
         >>> client = Client(base_url="https://httpbin.org")
-        >>> given(client).when("GET").then()\
-        >>>              .assert_body("some_value", greater_than("777"))
+        >>> given(client).when("GET").then().assert_body("some_value", greater_than("777"))
 
 
     Returns:
@@ -100,8 +97,7 @@ def less_than(expected):
         >>> from reqflow import Client, given
         >>> from reqflow.assertions import greater_than
         >>> client = Client(base_url="https://httpbin.org")
-        >>> given(client).when("GET").then()\
-        >>>              .assert_body("some_value", less_than("777"))
+        >>> given(client).when("GET").then().assert_body("some_value", less_than("777"))
 
     Returns:
         An assertion function that checks if the actual value is less than the provided value.
@@ -123,8 +119,7 @@ def list_contains(expected):
         >>> from reqflow import Client, given
         >>> from reqflow.assertions import list_contains
         >>> client = Client(base_url="https://httpbin.org")
-        >>> given(client).when("GET").then()\
-        >>>              .assert_body("json.some_array", list_contains(["foo", "bar", "baz"]))
+        >>> given(client).when("GET").then().assert_body("json.some_array", list_contains(["foo", "bar", "baz"]))
 
     Returns:
         An assertion function that checks if the actual value is contained in the provided list.
