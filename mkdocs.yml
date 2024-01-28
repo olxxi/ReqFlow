@@ -1,4 +1,6 @@
 site_name: ReqFlow
+site_url: https://reqflow.org/
+site_description: ReqFlow - Python API testing package
 repo_url: https://github.com/olxxi/ReqFlow
 repo_name: olxxi/ReqFlow
 theme:
