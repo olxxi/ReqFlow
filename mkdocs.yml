@@ -1,12 +1,14 @@
 site_name: ReqFlow
 site_url: https://reqflow.org/
-site_description: ReqFlow - Python API testing package
+site_description: ReqFlow - Python API testing framework
 repo_url: https://github.com/olxxi/ReqFlow
 repo_name: olxxi/ReqFlow
 theme:
   name: material
+  favicon: images/favicon.png
   icon:
     repo: fontawesome/brands/github
+    logo: material/snake
   features:
 #    - navigation.tabs
     - navigation.sections
