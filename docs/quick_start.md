@@ -10,7 +10,7 @@ Let's make a simple request to [HTTPBin](https://httpbin.org) API by create a ne
 
 ```python linenums="1"
 client = Client("https://httpbin.org")
-given(client).when("GET", "/get").then()status_code(200)
+given(client).when("GET", "/get").then().status_code(200)
 ```
 
 For other HTTP methods, you can use the `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` parameters:
