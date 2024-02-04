@@ -25,4 +25,4 @@ whether you're working with RESTful APIs, JSON, XML, or other data formats.
 
 To get started with the fundamentals of ReqFlow, check out the [Quick Start](https://olxxi.github.io/ReqFlow/quick_start/) page.
 
-For detailed information on each function and feature, check out the [API Reference](https://olxxi.github.io/ReqFlow/fluent_api/) page.
+For detailed information on each function and feature, check out the [API Reference](https://olxxi.github.io/ReqFlow/fluent_api/).
