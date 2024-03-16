@@ -54,4 +54,4 @@ print(response)
 ```
 
 ### Documentation
-Detailed documentation can be found [here](https://reqflow.org/).
+Detailed documentation can be found at [reqflow.org](https://reqflow.org/)
