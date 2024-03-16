@@ -42,7 +42,7 @@ client = Client(base_url="https://api.example.com")
 
 # Use ReqFlow's fluent API
 response = (given(client)
-            .header("Authorization", "Bearer your_token")
+            .header("Authorization", "Bearer TOKEN_VALUE")
             .query_param("param", "value")
             .when("GET", "/your_endpoint")
             .then()
