@@ -10,7 +10,7 @@ import base64
 import os
 
 
-def given(client: Client):
+def given(client: Client) -> 'Given':
     """
     Initializes the Given stage with a client.
 
@@ -20,7 +20,7 @@ def given(client: Client):
     Examples:
         >>> from reqflow import given, Client
         >>> client = Client(base_url="https://url.com")
-        >>> given(client).when("GET", "/path").then().assert_status_code(200)
+        >>> given(client).when("GET", "/path").then().status_code(200)
 
     Returns:
         Given (class): An instance of the Given class initialized with the provided client.
@@ -47,7 +47,7 @@ class Given:
         self.data = None
         self.files = {}
 
-    def query_param(self, params: Dict[str, Any]):
+    def query_param(self, params: Dict[str, Any]) -> 'Given':
         """
         Adds a query parameter to the request.
 
@@ -66,7 +66,7 @@ class Given:
         self.params = params
         return self
 
-    def cookies(self, cookies: Dict[str, Any]):
+    def cookies(self, cookies: Dict[str, Any]) -> 'Given':
         """
         Adds multiple cookies to the request.
 
@@ -85,7 +85,7 @@ class Given:
         self.request_cookies = cookies
         return self
 
-    def header(self, key: str, value: Any):
+    def header(self, key: str, value: Any) -> 'Given':
         """
         Adds a header to the request.
 
@@ -104,7 +104,7 @@ class Given:
         self.request_headers[key] = value
         return self
 
-    def headers(self, headers: Dict[str, Any]):
+    def headers(self, headers: Dict[str, Any]) -> 'Given':
         """
         Adds multiple headers to the request.
 
@@ -115,9 +115,9 @@ class Given:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
             >>> HEADERS = {'Authorization': 'Bearer TOKEN', 'test_header': 'test_value'}
-            >>> given(client).headers(HEADERS)\
-                .when("GET", "/headers")\
-                .then()...
+            >>> given(client).headers(HEADERS).\
+                  when("GET", "/headers").\
+                  then()...
 
         Returns:
             Given: The instance of the Given class.
@@ -125,7 +125,7 @@ class Given:
         self.request_headers = headers
         return self
 
-    def body(self, content: Union[dict, None] = None, *, json: Any = None, data: Any = None):
+    def body(self, content: Union[dict, None] = None, *, json: Any = None, data: Any = None) -> 'Given':
         """
         Sets the body of the request. Either `json` or `data` can be set, but not both.
 
@@ -162,7 +162,7 @@ class Given:
 
         return self
 
-    def file_upload(self, field_name: str, file_path: str):
+    def file_upload(self, field_name: str, file_path: str) -> 'Given':
         """
         Sets the file to upload for the request.
         Args:
@@ -171,8 +171,9 @@ class Given:
 
         Examples:
             >>> from reqflow import given, Client
-            >>> given(client).file_upload("userfile", "data/test.png")
-            >>>     .when("POST", "/doc/file_upload.html").then()...
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).file_upload("userfile", "data/test.png").\
+            >>>     when("POST", "/doc/file_upload.html").then()...
 
         Note:
             `field_name` must be the same as the name of the form field in the request.
@@ -187,7 +188,7 @@ class Given:
             raise FileNotFoundError(f"File {file_path} not found")
         return self
 
-    def when(self, method: str, url: Optional[str] = ""):
+    def when(self, method: str, url: Optional[str] = "") -> 'When':
         """
         Transitions from the Given stage to the When stage, where the request is made.
 
@@ -239,7 +240,7 @@ class When:
         self.data = data
         self.files = files
 
-    def with_auth(self, username: str, password: str):
+    def with_auth(self, username: str, password: str) -> 'When':
         """
         Adds basic authentication to the request.
 
@@ -250,7 +251,7 @@ class When:
         Examples:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
-            >>> given(client).with_auth("user", "pass").when("GET", "/basic-auth/user/pass").then()...
+            >>> given(client).when("GET", "/basic-auth/user/pass").with_auth("user", "pass").then()...
 
         Returns:
             When: The instance of the When class.
@@ -260,7 +261,7 @@ class When:
         self.headers["Authorization"] = f"Basic {encoded_credentials}"
         return self
 
-    def with_oauth2(self, token: str):
+    def with_oauth2(self, token: str) -> 'When':
         """
         Adds OAuth2 authentication to the request.
 
@@ -271,7 +272,7 @@ class When:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
             >>> token = "some_token"
-            >>> given(client).with_oauth2(token).when("GET", "/bearer").then()...
+            >>> given(client).when("GET", "/bearer").with_oauth2(token).then()...
 
         Returns:
             When: The instance of the When class.
@@ -279,7 +280,7 @@ class When:
         self.headers["Authorization"] = f"Bearer {token}"
         return self
 
-    def with_api_key(self, key: str, value: str):
+    def with_api_key(self, key: str, value: str) -> 'When':
         """
         Adds API key authentication to the request.
 
@@ -293,7 +294,7 @@ class When:
         self.headers[key] = value
         return self
 
-    def then(self, follow_redirects: bool = False):
+    def then(self, follow_redirects: bool = False) -> 'Then':
         """
         Transitions from the When stage to the Then stage, where the response is handled.
 
@@ -328,7 +329,7 @@ class Then:
         self.response = response
         self.client = client
 
-    def get_response(self):
+    def get_response(self) -> UnifiedResponse:
         """
         Retrieves the response object.
 
@@ -344,7 +345,7 @@ class Then:
         """
         return self.response
 
-    def validate_data(self, expected_model: BaseModel):
+    def validate_data(self, expected_model: BaseModel) -> 'Then':
         """
         Validates the response data against the expected Pydantic model.
 
@@ -379,7 +380,7 @@ class Then:
             raise AssertionError(f"The response data does not match the expected model: {str(e)}")
         return self
 
-    def status_code(self, expected_status_code: int):
+    def status_code(self, expected_status_code: int) -> 'Then':
         """
         Asserts that the response status code matches the expected status code.
 
@@ -401,7 +402,7 @@ class Then:
             f"Status code {self.response.status_code} is not {expected_status_code}"
         return self
 
-    def status_code_is_between(self, min_status_code: int, max_status_code: int):
+    def status_code_is_between(self, min_status_code: int, max_status_code: int) -> 'Then':
         """
         Asserts that the response status code is within the specified range.
 
@@ -424,7 +425,7 @@ class Then:
             f"Status code {self.response.status_code} is not between {min_status_code} and {max_status_code}"
         return self
 
-    def assert_body(self, json_path: str, expected_value: Any):
+    def assert_body(self, json_path: str, expected_value: Any) -> 'Then':
         """
         Asserts that a specific part of the response body matches the expected value.
 
@@ -453,7 +454,7 @@ class Then:
         self.response._assert_json(json_path, expected_value)
         return self
 
-    def get_content(self):
+    def get_content(self) -> Any:
         """
         Retrieves the content of the response body.
 
@@ -467,7 +468,7 @@ class Then:
         """
         return self.response.content
 
-    def get_header(self, header_name: str):
+    def get_header(self, header_name: str) -> Any:
         """
         Retrieves the value of a specific header from the response.
 
@@ -490,7 +491,7 @@ class Then:
             raise KeyError(f"Header {header_name} not found in response")
         return header
 
-    def get_headers(self):
+    def get_headers(self) -> Dict[str, Any]:
         """
         Retrieves all headers from the response.
 
@@ -506,7 +507,7 @@ class Then:
         """
         return self.response.headers
 
-    def get_encoding(self):
+    def get_encoding(self) -> str:
         """
         Retrieves the encoding of the response.
 
@@ -522,7 +523,7 @@ class Then:
         """
         return self.response.encoding
 
-    def assert_header(self, header_name: str, expected_value: Any):
+    def assert_header(self, header_name: str, expected_value: Any) -> 'Then':
         """
         Asserts that a specific header matches the expected value.
 
@@ -542,7 +543,7 @@ class Then:
         self.response._assert_header(header_name, expected_value)
         return self
 
-    def assert_response_time(self, max_time: float):
+    def assert_response_time(self, max_time: float) -> 'Then':
         """
         Asserts that the response time is less than or equal to the specified maximum time.
 
@@ -564,7 +565,7 @@ class Then:
             f"Response time {self.response.response_time} exceeds the maximum expected time {max_time}"
         return self
 
-    def assert_cookie(self, cookie_name: str, expected_value: Any):
+    def assert_cookie(self, cookie_name: str, expected_value: Any) -> 'Then':
         """
         Asserts that a specific cookie matches the expected value.
 
@@ -585,7 +586,7 @@ class Then:
         self.response._assert_cookie(cookie_name, expected_value)
         return self
 
-    def get_cookies(self):
+    def get_cookies(self) -> Dict[str, Any]:
         """
         Retrieves all cookies from the response.
 
@@ -598,7 +599,7 @@ class Then:
         """
         return dict(self.response.cookies)
 
-    def save_response_to_file(self, file_path: str):
+    def save_response_to_file(self, file_path: str) -> 'Then':
         """
         Saves the response content to a specified file. Useful for downloading files.
 
