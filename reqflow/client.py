@@ -35,6 +35,7 @@ class Client:
         headers: Optional[Dict[str, Any]] = None,
         cookies: Optional[Dict[str, Any]] = None,
         json: Optional[Any] = None,
+        data: Optional[Any] = None,
         redirect: Optional[bool] = False,
         files: Optional[Dict[str, Any]] = None,
     ) -> UnifiedResponse:
@@ -43,8 +44,8 @@ class Client:
         full_url = f"{self.base_url}{url}"
 
         http_response = self.http_client.request(
-            method, full_url, params=params, headers=headers, json=json, cookies=cookies, follow_redirects=redirect,
-            files=files
+            method, full_url, params=params, headers=headers, json=json, data=data,cookies=cookies,
+            follow_redirects=redirect, files=files
         )
 
         response_time = time.time() - start_time

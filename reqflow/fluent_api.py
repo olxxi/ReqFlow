@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from .client import Client
 from reqflow.response.response import UnifiedResponse
@@ -44,6 +44,7 @@ class Given:
         self.request_headers = {}
         self.request_cookies = {}
         self.json = None
+        self.data = None
         self.files = {}
 
     def query_param(self, params: Dict[str, Any]):
@@ -124,22 +125,41 @@ class Given:
         self.request_headers = headers
         return self
 
-    def body(self, json: Any):
+    def body(self, content: Union[dict, None] = None, *, json: Any = None, data: Any = None):
         """
-        Sets the JSON body of the request.
+        Sets the body of the request. Either `json` or `data` can be set, but not both.
 
         Args:
-            json (Any): The JSON body to set for the request.
+            content (dict, optional): Shortcut for setting JSON data directly. Defaults to None.
+            json (Any, optional): The JSON body to set for the request. Defaults to None.
+            data (Any, optional): The form data to send in the body of the request. Defaults to None.
 
         Examples:
             >>> from reqflow import given, Client
             >>> client = Client(base_url="https://httpbin.org")
+            >>> # Using `content` as a shortcut for JSON data
             >>> given(client).body({"key": "value"}).when("POST", "/post").then()...
+            >>> # Explicitly using `json` parameter
+            >>> given(client).body(json={"key": "value"}).when("POST", "/post").then()...
+            >>> # Using `data` for form data
+            >>> given(client).body(data="key=value").when("POST", "/post").then()...
+
+        Raises:
+            ValueError: If both `json` and `data` are provided.
 
         Returns:
             Given: The instance of the Given class.
         """
-        self.json = json
+        if content:
+            if json is not None or data is not None:
+                raise ValueError("Cannot set both `content` and `json` or `data`")
+            self.json = content
+        else:
+            if json is not None and data is not None:
+                raise ValueError("Cannot set both `json` and `data` for the request")
+            self.json = json
+            self.data = data
+
         return self
 
     def file_upload(self, field_name: str, file_path: str):
@@ -187,7 +207,7 @@ class Given:
             When: The instance of the When class.
         """
         return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json,
-                    cookies=self.request_cookies, files=self.files)
+                    data=self.data, cookies=self.request_cookies, files=self.files)
 
 
 class When:
@@ -196,7 +216,7 @@ class When:
     """
 
     def __init__(self, client: Client, method: str, url: Optional[str] = "", params: Optional[Dict[str, Any]] = None,
-                 headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None,
+                 headers: Optional[Dict[str, Any]] = None, json: Optional[Any] = None, data: Optional[Any] = None,
                  cookies: Optional[Dict[str, Any]] = None, files: Optional[Dict[str, Any]] = None):
         """
         Initializes the When class with the details of the request to be made.
@@ -216,6 +236,7 @@ class When:
         self.headers = headers or {}
         self.cookies = cookies or {}
         self.json = json
+        self.data = data
         self.files = files
 
     def with_auth(self, username: str, password: str):
@@ -286,7 +307,7 @@ class When:
             Then: The instance of the Then class with the response from the request.
         """
         response = self.client._send(self.method, self.url, params=self.params, headers=self.headers,
-                                     json=self.json, cookies=self.cookies, redirect=follow_redirects,
+                                     json=self.json, data=self.data, cookies=self.cookies, redirect=follow_redirects,
                                      files=self.files)
         return Then(response, self.client)
 

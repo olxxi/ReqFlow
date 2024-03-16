@@ -15,7 +15,39 @@ def test_get_request():
 
 def test_post_request():
     payload = {"foo": "bar"}
-    given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))
+    r = given(client).body(payload).when("POST", "/post").then().status_code(200).assert_body("json.foo", equal_to("bar"))\
+     .get_response()
+    assert r.body.get('headers').get('Content-Type') == 'application/json'
+
+
+def test_post_data_body_request():
+    payload = {"foo": "bar"}
+    r = given(client).body(data=payload).when("POST", "/post").then().get_response()
+    assert r.body.get('headers').get('Content-Type') == 'application/x-www-form-urlencoded'
+
+
+def test_post_json_body_request():
+    payload = {"foo": "bar"}
+    r = given(client).body(json=payload).when("POST", "/post").then().get_response()
+    assert r.body.get('headers').get('Content-Type') == 'application/json'
+
+
+@pytest.mark.xfail(raises=ValueError)
+def test_post_both_types_body_request():
+    payload = {"foo": "bar"}
+    given(client).body(json=payload, data=payload).when("POST", "/post").then().get_response()
+
+
+@pytest.mark.xfail(raises=ValueError)
+def test_post_content_data_body_request():
+    payload = {"foo": "bar"}
+    given(client).body(payload, data=payload).when("POST", "/post").then().get_response()
+
+
+@pytest.mark.xfail(raises=ValueError)
+def test_post_content_json_body_request():
+    payload = {"foo": "bar"}
+    given(client).body(payload, data=payload).when("POST", "/post").then().get_response()
 
 
 def test_put_request():
