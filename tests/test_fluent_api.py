@@ -38,6 +38,28 @@ def test_post_both_types_body_request():
     given(client).body(json=payload, data=payload).when("POST", "/post").then().get_response()
 
 
+def test_status_code_404():
+    given(client).when("GET", "/nonexistent").then().status_code(404)
+
+
+def test_content_type():
+    given(client).when("GET", "/text").then().\
+        assert_header('Content-Type', equal_to('text/html'))
+
+
+def test_header_exists():
+    given(client).when("GET", "/get").then().assert_header_exists('Date')
+
+
+@pytest.mark.xfail(raises=AssertionError)
+def test_assert_header_exists_failure():
+    given(client).when("GET", "/get").then().assert_header_exists('Non-Existent-Header')
+
+
+def test_assert_header_exists_case_insensitivity():
+    given(client).when("GET", "/get").then().assert_header_exists('date')
+
+
 @pytest.mark.xfail(raises=ValueError)
 def test_post_content_data_body_request():
     payload = {"foo": "bar"}

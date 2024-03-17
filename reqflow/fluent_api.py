@@ -543,6 +543,24 @@ class Then:
         self.response._assert_header(header_name, expected_value)
         return self
 
+    def assert_header_exists(self, header_name: str) -> 'Then':
+        """
+        Asserts that a specific header exists in the response.
+
+        Args:
+            header_name (str): The name of the header to assert.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().assert_header_exists("Content-Type")
+
+        Returns:
+            Then: The instance of the Then class.
+        """
+        assert header_name in self.response.headers, f"Header {header_name} does not exist in the response"
+        return self
+
     def assert_response_time(self, max_time: float) -> 'Then':
         """
         Asserts that the response time is less than or equal to the specified maximum time.
