@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Type
 
 from .client import Client
 from reqflow.response.response import UnifiedResponse
@@ -345,12 +345,12 @@ class Then:
         """
         return self.response
 
-    def validate_data(self, expected_model: BaseModel) -> 'Then':
+    def validate_data(self, expected_model: Type[BaseModel]) -> 'Then':
         """
         Validates the response data against the expected Pydantic model.
 
         Args:
-            expected_model (BaseModel): The Pydantic model to validate the response data against.
+            expected_model (Type[BaseModel]): The Pydantic model to validate the response data against.
 
         Raises:
             AssertionError: If the response data does not match the expected model.
