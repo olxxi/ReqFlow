@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ReqFlow',
-    version='1.0.4-alpha',
+    version='1.0.5-alpha',
     packages=find_packages(),
     install_requires=[
         'httpx>=0.26.0',
