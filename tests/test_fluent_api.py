@@ -6,8 +6,10 @@ from reqflow.response.response import UnifiedResponse
 import pytest
 from unittest.mock import Mock
 
-client = Client(base_url="https://httpbin.org")
+from httpx._exceptions import ReadTimeout
 
+client = Client(base_url="https://httpbin.org")
+mock_client = Client(base_url="http://127.0.0.1:5000")
 
 def test_get_request():
     given(client).when("GET", "/get?foo=bar").then().status_code(200).assert_body("args.foo", equal_to("bar"))
@@ -130,6 +132,30 @@ def test_status_code_is_between():
 
 def test_assert_response_time():
     given(client).when("GET", "/get?foo=bar").then().assert_response_time(5)
+
+
+def test_timeout():
+    # TODO: Create fixture to run the server
+    given(mock_client).when("GET", "/delay/2").then(timeout=2.5).status_code(200)
+
+
+@pytest.mark.xfail(raises=ReadTimeout)
+def test_timeout_xfailed():
+    given(mock_client).when("GET", "/delay/2").then(timeout=1.9).status_code(200)
+
+
+@pytest.mark.xfail(raises=ReadTimeout)
+def test_timeout_very_small():
+    given(mock_client).when("GET", "/delay/2").then(timeout=0.001).status_code(200)
+
+
+def test_timeout_very_large():
+    r = given(mock_client).when("GET", "/delay/2").then(timeout=10000).status_code(200)
+
+
+@pytest.mark.xfail(raises=ReadTimeout)
+def test_timeout_post_method():
+    given(mock_client).body({"foo": "bar"}).when("POST", "/delay/2").then(timeout=1.9).status_code(200)
 
 
 @pytest.mark.xfail(raises=AssertionError)
