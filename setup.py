@@ -4,6 +4,7 @@ setup(
     name='ReqFlow',
     version='1.0.6-alpha',
     packages=find_packages(),
+    python_requires='>=3.8',
     install_requires=[
         'httpx>=0.26.0',
         'jsonpath-ng>=1.6.1',
