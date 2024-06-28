@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ReqFlow',
-    version='1.0.6-alpha',
+    version='1.0.7-alpha',
     packages=find_packages(),
     python_requires='>=3.8',
     install_requires=[
