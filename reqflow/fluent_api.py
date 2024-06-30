@@ -299,7 +299,7 @@ class When:
         Transitions from the When stage to the Then stage, where the response is handled.
 
         Args:
-            timeout: (float): The timeout for the request in seconds. Defaults to 5.0.
+            timeout: The timeout for the request in seconds. Defaults to 5.0.
             follow_redirects (bool): httpx parameter to follow redirects or not. Defaults to False.
 
         Note:
@@ -308,9 +308,9 @@ class When:
         Returns:
             Then: The instance of the Then class with the response from the request.
         """
-        response = self.client._send(self.method, self.url, params=self.params, headers=self.headers,
-                                     json=self.json, data=self.data, cookies=self.cookies, redirect=follow_redirects,
-                                     files=self.files, timeout=timeout)
+        response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
+                                    json=self.json, data=self.data, cookies=self.cookies, redirect=follow_redirects,
+                                    files=self.files, timeout=timeout)
         return Then(response, self.client)
 
 

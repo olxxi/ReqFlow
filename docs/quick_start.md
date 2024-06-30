@@ -242,3 +242,87 @@ given(client).when("GET").then()\
     .status_code(200)\
     .save_response_to_file(file_path="file.pdf")
 ```
+
+### Logging
+
+ReqFlow supports logging to aggregate the test results and provide a detailed overview of the execution across all client objects. 
+To enable logging, set the `logging` argument to `True` when creating a new client object:
+
+```python linenums="1"
+client = Client("https://httpbin.org", logging=True)
+```
+
+With the `logging` enabled, all requests/responses made by the client object will be stored in the `GlobalLogger` object
+
+```python linenums="1"
+from reqflow.utils.logger import GlobalLogger
+from reqflow import Client, given
+
+client = Client(base_url="https://httpbin.org", logging=True)
+given(client).when("GET", "/get?foo=bar").then().status_code(200)
+
+logs = GlobalLogger.get_logs()
+print(logs)
+
+>>> [
+        {'function': 'test_function_name',
+        'request': {...request details...},
+        'response': {...response details...}
+    ]
+```
+
+The logger saves the following information:
+* `function` - the name of the test function (or the function from where the `then` method was called)
+* `request` - the request details (method, url, headers, body, query parameters, redirect and timeout options, cookies)
+* `response` - the response details (status code, headers, content, cookies, response time)
+
+#### Generating Reports
+##### HTML Report
+To generate an HTML report, use the `generate_html_report` method from the `GlobalLogger` object:
+
+```python linenums="1"
+from reqflow.utils.logger import GlobalLogger
+from reqflow import Client, given
+
+client = Client(base_url="https://httpbin.org", logging=True)
+given(client).when("GET", "/get?foo=bar").then().status_code(200)
+
+GlobalLogger.generate_html_report(file_path="/path/to/report.html", report_title="Smoke Test")
+```
+
+##### JSON Report
+To generate a JSON report, use the `generate_json_report` method from the `GlobalLogger` object:
+
+```python linenums="1"
+from reqflow.utils.logger import GlobalLogger
+from reqflow import Client, given
+
+client = Client(base_url="https://httpbin.org", logging=True)
+given(client).when("GET", "/get?foo=bar").then().status_code(200)
+
+GlobalLogger.generate_json_report(file_path="/path/to/report.json")
+```
+
+#### PyTest Integration
+To integrate ReqFlow reporting/logging with PyTest, one can use PyTest's fixtures and hooks in the `conftest.py` file:
+
+```python linenums="1"
+import pytest
+from reqflow.utils.logger import GlobalLogger
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):
+    yield
+
+@pytest.hookimpl
+def pytest_sessionfinish(session, exitstatus):
+    # TODO: Add test result to the logs
+    logs = GlobalLogger.get_logs()
+    if logs:
+        GlobalLogger.generate_html_report(file_path="test_report.html", report_title="Aggregated Requests")
+        GlobalLogger.generate_json_report(file_path="test_report.json")
+    GlobalLogger.clear_logs()
+```
+
+With the example above, the report will be generated after the test session is finished. 
+The results will be aggregated across all test functions and clients within the session.

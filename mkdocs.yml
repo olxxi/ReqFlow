@@ -44,6 +44,8 @@ nav:
       - Fluent API: fluent_api.md
       - Assertions: assertions.md
       - Response: response.md
+      - Client: client.md
+      - Logger: logger.md
 
 
 plugins:

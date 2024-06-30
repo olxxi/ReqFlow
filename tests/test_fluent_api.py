@@ -108,7 +108,7 @@ def test_is_assertion():
 
 def test_get_body():
     client_t = Client(base_url="https://httpbin.org")
-    response = client._send("GET", "/json")
+    response = client.send("GET", "/json")
     then = given(client).when("GET", "/json").then()
 
     # Test that get_body returns the JSON body of the response

@@ -5,7 +5,7 @@ from reqflow.assertions import equal_to
 
 def test_send_request():
     client = Client(base_url="https://jsonplaceholder.typicode.com")
-    response = client._send("GET", "/users/1")
+    response = client.send("GET", "/users/1")
     assert isinstance(response, UnifiedResponse)
     assert response.status_code == 200
 
