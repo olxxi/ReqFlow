@@ -24,6 +24,13 @@ class GlobalLogger:
         Get all the logs stored in the logger.
         Returns:
             A list of log entries.
+
+        Examples:
+            >>> from reqflow.utils.logger import GlobalLogger
+            >>>
+            >>> logs = GlobalLogger.get_logs()
+            >>> print(logs)
+            >>> [{'function': 'test_function', 'request': {'method': 'GET', 'url': 'https://some_url.com', 'params': {}, 'headers': {}, 'cookies': {}, 'json': None, 'data': None, 'redirect': 'auto', 'files': None, 'timeout': None}, 'response': {'status_code': 200, 'headers': {'Content-Type': 'application/json'}, 'content': b'{"key": "value"}', 'time': 0.123}}]
         """
 
         return cls.logs
@@ -32,6 +39,11 @@ class GlobalLogger:
     def clear_logs(cls):
         """
         Clear all the logs stored in the logger.
+
+        Examples:
+            >>> from reqflow.utils.logger import GlobalLogger
+            >>>
+            >>> GlobalLogger.clear_logs()
         """
 
         cls.logs.clear()
@@ -43,6 +55,12 @@ class GlobalLogger:
         Args:
             file_path: (str) The path/name to save the HTML report.
             report_title: (str) The name of the report.
+
+        Examples:
+            >>> from reqflow.utils.logger import GlobalLogger
+            >>>
+            >>> GlobalLogger.generate_html_report(file_path="test_report.html", report_title="Aggregated Requests")
+
         """
 
         log_entries = ""
@@ -89,6 +107,11 @@ class GlobalLogger:
         Generate a JSON report from the logs across all client instances.
         Args:
             file_path: (str) The path/name to save the HTML report.
+
+        Examples:
+            >>> from reqflow.utils.logger import GlobalLogger
+            >>>
+            >>> GlobalLogger.generate_json_report(file_path="test_report.json")
         """
 
         def convert_bytes(o):
