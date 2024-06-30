@@ -316,7 +316,6 @@ def pytest_runtest_protocol(item, nextitem):
 
 @pytest.hookimpl
 def pytest_sessionfinish(session, exitstatus):
-    # TODO: Add test result to the logs
     logs = GlobalLogger.get_logs()
     if logs:
         GlobalLogger.generate_html_report(file_path="test_report.html", report_title="Aggregated Requests")
