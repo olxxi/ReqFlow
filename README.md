@@ -2,7 +2,7 @@
 
 ![PyPI - Version](https://img.shields.io/pypi/v/reqflow)
 ![Python - version](https://img.shields.io/badge/python-3.8+-blue.svg)
-[![Tests](https://github.com/olxxi/ReqFlow/actions/workflows/tests.yml/badge.svg)](https://github.com/olxxi/ReqFlow/actions/workflows/tests.yml)
+[![Downloads](https://static.pepy.tech/badge/reqflow)](https://pepy.tech/project/reqflow)
 
 ReqFlow is a Python library designed for efficient and intuitive API testing. 
 ReqFlow offers a fluent and flexible interface for crafting and validating HTTP requests, 
