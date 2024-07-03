@@ -29,7 +29,7 @@ def given(client: Optional[Client] = None, url: Optional[str] = None, logging: O
         >>> # OR
         >>> given(url="https://url.com").when("GET", "/path").then().status_code(200)
         >>> # OR
-        >>> given(url="https://url.com", logging=True).when("GET", "https://url.com/path").then().status_code(200)
+        >>> given(url="https://url.com", logging=True).when("GET", "/path").then().status_code(200)
 
     Returns:
         Given (class): An instance of the Given class initialized with the provided client.
