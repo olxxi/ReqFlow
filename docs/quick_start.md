@@ -1,6 +1,6 @@
 ### Start
 
-Once ReqFlow is installed, start with importing the module along::
+Once ReqFlow is installed, start with importing the module along:
 ```python
 from reqflow import given, Client
 ```
@@ -13,6 +13,11 @@ client = Client("https://httpbin.org")
 given(client).when("GET", "/get").then().status_code(200)
 ```
 
+Alternatively, the request can be sent without explicitly defined client object:
+
+```python linenums="1"
+given(url="https://httpbin.org").when("GET", "/get").then().status_code(200)
+```
 For other HTTP methods, you can use the `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` parameters:
 
 ```python linenums="1"
@@ -286,6 +291,8 @@ from reqflow import Client, given
 
 client = Client(base_url="https://httpbin.org", logging=True)
 given(client).when("GET", "/get?foo=bar").then().status_code(200)
+# OR
+given(url="https://httpbin.org", logging=True).when("GET", "/get?foo=bar").then().status_code(200)
 
 GlobalLogger.generate_html_report(file_path="/path/to/report.html", report_title="Smoke Test")
 ```
@@ -299,6 +306,9 @@ from reqflow import Client, given
 
 client = Client(base_url="https://httpbin.org", logging=True)
 given(client).when("GET", "/get?foo=bar").then().status_code(200)
+# OR
+given(url="https://httpbin.org", logging=True).when("GET", "/get?foo=bar").then().status_code(200)
+
 
 GlobalLogger.generate_json_report(file_path="/path/to/report.json")
 ```
