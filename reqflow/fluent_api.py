@@ -3,30 +3,48 @@ from typing import Any, Dict, Optional, Union, Type
 from .client import Client
 from reqflow.response.response import UnifiedResponse
 from reqflow.validator.validator import Validator
+from reqflow.exceptions import GivenInitializationError, InvalidArgumentError, InvalidCredentialsError
 from pydantic import BaseModel
 from pydantic import ValidationError
 import base64
 
 import os
 
-
-def given(client: Client) -> 'Given':
+# Client optional, can be run just with the url
+def given(client: Optional[Client] = None, url: Optional[str] = None, logging: Optional[bool] = False) -> 'Given':
     """
-    Initializes the Given stage with a client.
+    Initializes the Given stage with a client instance or a URL. If
+    the client is not provided, the URL can be provided directly.
 
     Args:
         client (Client): The client instance to use for making the request.
+        url: If the client is not provided, the URL can be provided directly.
+            The client will be initialized with the URL as base_url.
+        logging (bool): If True, logs will be stored in GlobalLogger class.
 
     Examples:
         >>> from reqflow import given, Client
         >>> client = Client(base_url="https://url.com")
         >>> given(client).when("GET", "/path").then().status_code(200)
+        >>> # OR
+        >>> given(url="https://url.com").when("GET", "/path").then().status_code(200)
+        >>> # OR
+        >>> given(url="https://url.com", logging=True).when("GET", "https://url.com/path").then().status_code(200)
 
     Returns:
         Given (class): An instance of the Given class initialized with the provided client.
     """
-    return Given(client)
 
+    if client:
+        if url or logging:
+            raise GivenInitializationError("If client is provided, url and logging parameters are not accepted",
+                                           {'client': client, 'url': url, 'logging': logging})
+        return Given(client)
+    elif url:
+        return Given(Client(base_url=url, logging=logging))
+    else:
+        raise GivenInitializationError("Client or URL must be provided",
+                                       {'client': client, 'url': url, 'logging': logging})
 
 class Given:
     """
@@ -63,6 +81,9 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
+        if not isinstance(params, dict):
+            raise InvalidArgumentError("The `params` argument must be a dictionary.")
+
         self.params = params
         return self
 
@@ -82,10 +103,13 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
+        if not isinstance(cookies, dict):
+            raise InvalidArgumentError("The `cookies` argument must be a dictionary.")
+
         self.request_cookies = cookies
         return self
 
-    def header(self, key: str, value: Any) -> 'Given':
+    def header(self, key: str, value: str) -> 'Given':
         """
         Adds a header to the request.
 
@@ -101,6 +125,9 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
+        if not isinstance(key, str) or not isinstance(value, str):
+            raise InvalidArgumentError("Both `key` and `value` arguments must be strings.")
+
         self.request_headers[key] = value
         return self
 
@@ -122,6 +149,9 @@ class Given:
         Returns:
             Given: The instance of the Given class.
         """
+        if not isinstance(headers, dict):
+            raise InvalidArgumentError("The `headers` argument must be a dictionary.")
+
         self.request_headers = headers
         return self
 
@@ -256,6 +286,9 @@ class When:
         Returns:
             When: The instance of the When class.
         """
+        if not isinstance(username, str) or not isinstance(password, str):
+            raise InvalidCredentialsError("The `username` and `password` arguments must be strings.")
+
         credentials = f"{username}:{password}"
         encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
         self.headers["Authorization"] = f"Basic {encoded_credentials}"
@@ -277,6 +310,9 @@ class When:
         Returns:
             When: The instance of the When class.
         """
+        if not isinstance(token, str):
+            raise InvalidCredentialsError("The `token` argument must be a string.")
+
         self.headers["Authorization"] = f"Bearer {token}"
         return self
 
@@ -291,6 +327,9 @@ class When:
         Returns:
             When: The instance of the When class.
         """
+        if not isinstance(key, str) or not isinstance(value, str):
+            raise InvalidCredentialsError("The `key` and `value` arguments must be strings.")
+
         self.headers[key] = value
         return self
 

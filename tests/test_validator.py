@@ -2,6 +2,7 @@ from pydantic import BaseModel
 import pytest
 
 from reqflow import given, Client
+from reqflow.exceptions import ValidationError
 
 client = Client(base_url="https://httpbin.org")
 
