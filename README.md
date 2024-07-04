@@ -1,21 +1,21 @@
-# ReqFlow
+# ReqFlow: Python API Testing Made Easy
 
 ![PyPI - Version](https://img.shields.io/pypi/v/reqflow)
 ![Python - version](https://img.shields.io/badge/python-3.8+-blue.svg)
 [![Downloads](https://static.pepy.tech/badge/reqflow)](https://pepy.tech/project/reqflow)
 
-ReqFlow is a Python library designed for efficient and intuitive API testing. 
-ReqFlow offers a fluent and flexible interface for crafting and validating HTTP requests, 
-making API testing both straightforward and adaptable. While it make sense to use standard approaches for a Python API
-testing, ReqFlow reduces the entry barrier for beginners and allows for more advanced use cases with RestAssured-like
-approach. 
+ReqFlow is a robust Python library for efficient and intuitive API testing. 
+Designed with a fluent and flexible interface, it simplifies the process of crafting and validating HTTP requests. 
+Lowering the entry barrier, perfect for both beginners and advanced users, 
+ReqFlow's RestAssured-like approach makes Python API testing straightforward and powerful.
 
 ### Features
 
-* Fluent API for building and sending HTTP requests.
-* Supports response handling and validations.
-* Customizable response validation using `PyDantic` models.
-* Convenient utility methods for common assertions and response manipulations.
+* Fluent API: Build and send HTTP requests effortlessly.
+* Response handling and validations
+* `PyDantic` Integration: Customizable response validation.
+* Utility Methods: Common assertions and response manipulations.
+* Reporting and `PyTest` Integration
 
 The tool is still in development, braking changes are possible. Any feedback and contributions are highly appreciated.
 
