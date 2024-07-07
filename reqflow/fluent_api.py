@@ -333,14 +333,14 @@ class When:
         self.headers[key] = value
         return self
 
-    def then(self, follow_redirects: bool = False, timeout: float = 5.0) -> 'Then':
+    def then(self, follow_redirects: bool = False, timeout: float = 5.0, force_json_decoding: bool = False) -> 'Then':
         """
         Transitions from the When stage to the Then stage, where the response is handled.
 
         Args:
-            timeout: The timeout for the request in seconds. Defaults to 5.0.
             follow_redirects (bool): httpx parameter to follow redirects or not. Defaults to False.
-
+            timeout: The timeout for the request in seconds. Defaults to 5.0.
+            force_json_decoding: If True, forces JSON decoding of the response despite response headers. Defaults to False. The default behavior is to decode JSON only if the response content type is 'application/json'.
         Note:
             The actual request is made when this method is called.
 
@@ -349,7 +349,7 @@ class When:
         """
         response = self.client.send(self.method, self.url, params=self.params, headers=self.headers,
                                     json=self.json, data=self.data, cookies=self.cookies, redirect=follow_redirects,
-                                    files=self.files, timeout=timeout)
+                                    files=self.files, timeout=timeout, force_json=force_json_decoding)
         return Then(response, self.client)
 
 

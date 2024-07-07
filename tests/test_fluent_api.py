@@ -133,24 +133,29 @@ def test_status_code_is_between():
 def test_assert_response_time():
     given(client).when("GET", "/get?foo=bar").then().assert_response_time(5)
 
+
 @pytest.mark.skip(reason="Skip for CI tests")
 def test_timeout():
     # TODO: Create fixture to run the server and setup on CI
     given(mock_client).when("GET", "/delay/2").then(timeout=2.5).status_code(200)
+
 
 @pytest.mark.skip(reason="Skip for CI tests")
 @pytest.mark.xfail(raises=ReadTimeout)
 def test_timeout_xfailed():
     given(mock_client).when("GET", "/delay/2").then(timeout=1.9).status_code(200)
 
+
 @pytest.mark.skip(reason="Skip for CI tests")
 @pytest.mark.xfail(raises=ReadTimeout)
 def test_timeout_very_small():
     given(mock_client).when("GET", "/delay/2").then(timeout=0.001).status_code(200)
 
+
 @pytest.mark.skip(reason="Skip for CI tests")
 def test_timeout_very_large():
     r = given(mock_client).when("GET", "/delay/2").then(timeout=10000).status_code(200)
+
 
 @pytest.mark.skip(reason="Skip for CI tests")
 @pytest.mark.xfail(raises=ReadTimeout)
@@ -161,6 +166,7 @@ def test_timeout_post_method():
 @pytest.mark.xfail(raises=AssertionError)
 def test_assert_response_time_xfailed():
     given(client).when("GET", "/get?foo=bar").then().assert_response_time(0.01)
+
 
 def test_get_encoding():
     enc = given(client).when("GET", "/get?foo=bar").then().get_encoding()

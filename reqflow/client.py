@@ -20,8 +20,7 @@ class Client:
     def __init__(self, base_url: Optional[str] = "", logging: Optional[bool] = False):
         """
         Args:
-            base_url (str): The base URL for all requests sent by this client. The URL parameter is optional and can be
-            overridden by the URL parameter in when() method.
+            base_url (str): The base URL for all requests sent by this client. The URL parameter is optional and can be overridden by the URL parameter in when() method.
             logging (bool): If True, logs will be stored for each request sent by this client.
         """
         self.base_url = base_url
@@ -67,6 +66,7 @@ class Client:
         redirect: Optional[bool] = False,
         files: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = 5.0,
+        force_json: Optional[bool] = False
     ) -> UnifiedResponse:
 
         start_time = time.time()
@@ -87,4 +87,4 @@ class Client:
             self._log_request(called_function, method, full_url, params, headers, cookies, json,
                              data, redirect, files, timeout, http_response, response_time)
 
-        return UnifiedResponse(http_response, response_time, response_type='REST')
+        return UnifiedResponse(http_response, response_time, response_type='REST', force_json=force_json)
