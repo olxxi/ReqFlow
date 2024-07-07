@@ -1,4 +1,5 @@
 import httpx
+import json
 from json.decoder import JSONDecodeError
 from jsonpath_ng import parse
 from typing import Any, Callable
@@ -8,7 +9,8 @@ class UnifiedResponse:
     """
     A unified response object.
     """
-    def __init__(self, http_response: httpx.Response, response_time: float = None, response_type: str = 'REST'):
+    def __init__(self, http_response: httpx.Response, response_time: float = None, response_type: str = 'REST',
+                 force_json: bool = False):
         self._status_code = http_response.status_code
         self._headers = http_response.headers
         self._response_time = response_time
@@ -16,19 +18,26 @@ class UnifiedResponse:
         self._response_type = response_type
         self._content_type = http_response.headers.get('Content-Type', '')
         self._encoding = http_response.encoding
+        self._force_json = force_json
 
         try:
             self.cookies = http_response.cookies
         except (RuntimeError, AttributeError):
             self.cookies = None
 
-        if 'application/json' in self.content_type:
-            self.body = http_response.json()
-        elif 'text/' in self.content_type:
-            self.body = http_response.text
+        if self._force_json:
+            try:
+                self.body = http_response.json()
+            except (JSONDecodeError, UnicodeDecodeError):
+                raise JSONDecodeError("Force JSON decoding failed", str(self._raw_body), pos=0)
         else:
-            # For binary data
-            self.body = http_response.content
+            if 'application/json' in self.content_type:
+                self.body = http_response.json()
+            elif 'text/' in self.content_type:
+                    self.body = http_response.text
+            else:
+                # For binary data
+                self.body = http_response.content
 
     @property
     def encoding(self) -> str:
