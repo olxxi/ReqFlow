@@ -491,7 +491,28 @@ class Then:
         Returns:
             Then: The instance of the Then class.
         """
+
         self.response._assert_json(json_path, expected_value)
+        return self
+
+    def assert_body_text(self, expected_value: str) -> 'Then':
+        """
+        Asserts that the response body matches the expected value.
+
+        Args:
+            expected_value: The expected value to compare against.
+
+        Examples:
+            >>> from reqflow import given, Client
+            >>> from reqflow.assertions import equal_to
+            >>> client = Client(base_url="https://httpbin.org")
+            >>> given(client).when("GET", "/get").then().assert_body_text("Hello, World!")
+
+        Returns:
+            Then: The instance of the Then class.
+        """
+        assert self.response.body == expected_value, (f"Response body: {self.response.body} \n "
+                                                      f"does not match the expected value: {expected_value}")
         return self
 
     def get_content(self) -> Any:

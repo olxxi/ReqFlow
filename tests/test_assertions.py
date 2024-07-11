@@ -92,3 +92,9 @@ def test_combined_assertions_or_failed():
 def test_combined_assertions_and_failed():
     given(client).body(payload).when('POST', "/post").then() \
         .assert_body('json.float', and_(less_than(1), greater_than(1)))
+
+
+def test_assert_body_text():
+    expected_response = 'User-agent: *\nDisallow: /deny\n'
+
+    given(client).when('GET', "/robots.txt").then().assert_body_text(expected_response)
