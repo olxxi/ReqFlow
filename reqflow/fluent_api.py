@@ -4,13 +4,13 @@ from .client import Client
 from reqflow.response.response import UnifiedResponse
 from reqflow.validator.validator import Validator
 from reqflow.exceptions import GivenInitializationError, InvalidArgumentError, InvalidCredentialsError
+from reqflow.utils.constants import HttpMethods, HTTPStatusCodes
 from pydantic import BaseModel
 from pydantic import ValidationError
 import base64
 
 import os
 
-# Client optional, can be run just with the url
 def given(client: Optional[Client] = None, url: Optional[str] = None, logging: Optional[bool] = False) -> 'Given':
     """
     Initializes the Given stage with a client instance or a URL. If
@@ -218,7 +218,7 @@ class Given:
             raise FileNotFoundError(f"File {file_path} not found")
         return self
 
-    def when(self, method: str, url: Optional[str] = "") -> 'When':
+    def when(self, method: str = None, url: Optional[str] = "") -> 'When':
         """
         Transitions from the Given stage to the When stage, where the request is made.
 
@@ -237,6 +237,13 @@ class Given:
         Returns:
             When: The instance of the When class.
         """
+
+        if not method:
+            raise ValueError("HTTP method must be provided in the `when` method.")
+
+        if method.upper() not in HttpMethods.__members__:
+            raise ValueError(f"Invalid HTTP method: {method}. Must be one of {list(HttpMethods.__members__.keys())}.")
+
         return When(self.client, method, url, params=self.params, headers=self.request_headers, json=self.json,
                     data=self.data, cookies=self.request_cookies, files=self.files)
 
@@ -420,7 +427,7 @@ class Then:
             raise AssertionError(f"The response data does not match the expected model: {str(e)}")
         return self
 
-    def status_code(self, expected_status_code: int) -> 'Then':
+    def status_code(self, expected_status_code: Union[int, HTTPStatusCodes]) -> 'Then':
         """
         Asserts that the response status code matches the expected status code.
 
