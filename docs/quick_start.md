@@ -225,6 +225,59 @@ given(client).when("GET", "/users/1").then()\
     .validate_data(User)
 ```
 
+To ensure more integrity of your data, you can use various constrains provided by PyDantic.
+
+```python linenums="1"
+from pydantic import BaseModel, Field, EmailStr, constr, condecimal
+
+class Geo(BaseModel):
+    lat: condecimal(gt=-90, lt=90)
+    lng: condecimal(gt=-180, lt=180)
+
+class Address(BaseModel):
+    street: constr(min_length=1, max_length=100)
+    suite: constr(min_length=1, max_length=100)
+    city: constr(min_length=1, max_length=100)
+    zipcode: constr(min_length=5, max_length=10)
+    geo: Geo
+
+class Company(BaseModel):
+    name: constr(min_length=1, max_length=100)
+    catchPhrase: constr(min_length=1, max_length=255)
+    bs: constr(min_length=1, max_length=255)
+
+class User(BaseModel):
+    id: int
+    name: constr(min_length=1, max_length=100)
+    username: constr(min_length=1, max_length=100)
+    email: EmailStr
+    address: Address
+    phone: constr(min_length=10, max_length=20, pattern=r'^\+?\d[\d -]{8,12}\d$')
+    website: constr(min_length=1, max_length=100)
+    company: Company
+
+given(client).when("GET", "/users/1").then()\
+    .status_code(200)\
+    .validate_data(User)
+```
+
+You can also use decimal and float constraints to ensure numeric values fall within specific ranges or meet other conditions.
+
+```python linenums="1"
+class FinancialData(BaseModel):
+    amount: condecimal(gt=0, max_digits=10, decimal_places=2)
+    interest_rate: Field(ge=0.0, le=1.0)
+
+class UserFinancials(BaseModel):
+    id: int
+    name: str
+    balance: FinancialData
+
+given(client).when("GET", "/users/1/financials").then()\
+    .status_code(200)\
+    .validate_data(UserFinancials)
+```
+
 ### Upload files
 
 To upload a file to a particular endpoint, use the `file_upload` method specifying the `field_name` and the path to the file:
