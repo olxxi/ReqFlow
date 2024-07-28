@@ -359,6 +359,24 @@ class When:
                                     files=self.files, timeout=timeout, force_json=force_json_decoding)
         return Then(response, self.client)
 
+    async def then_async(self, follow_redirects: bool = False, timeout: float = 5.0, force_json_decoding: bool = False) -> 'Then':
+        """
+        Async version of the `then` method awaiting the response.
+
+        Args:
+            follow_redirects (bool): httpx parameter to follow redirects or not. Defaults to False.
+            timeout: The timeout for the request in seconds. Defaults to 5.0.
+            force_json_decoding: If True, forces JSON decoding of the response despite response headers. Defaults to False. The default behavior is to decode JSON only if the response content type is 'application/json'.
+
+        Returns:
+            Then: The instance of the Then class with the response from the request
+        """
+        response = await self.client.send_async(self.method, self.url, params=self.params, headers=self.headers,
+                                                json=self.json, data=self.data, cookies=self.cookies, redirect=follow_redirects,
+                                                files=self.files, timeout=timeout, force_json=force_json_decoding)
+        return Then(response, self.client)
+
+
 
 class Then:
     """
