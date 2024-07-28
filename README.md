@@ -14,6 +14,7 @@ ReqFlow's RestAssured-like approach makes Python API testing straightforward and
 * Fluent API: Build and send HTTP requests effortlessly.
 * Response handling and validations
 * `PyDantic` Integration: Customizable response validation.
+* Asynchronous Support: Perform concurrent API requests.
 * Utility Methods: Common assertions and response manipulations.
 * Reporting and `PyTest` Integration
 
@@ -43,6 +44,7 @@ pip install reqflow
 * [Authentication](#authentication)
 * [Assertions](#assertions)
 * [PyDantic Response Validation](#pydantic-response-validation)
+* [Asynchronous requests with ReqFlow](#asynchronous-requests)
 * [Upload files](#upload-files)
 * [Download files](#download-files)
 * [Logging and PyTest Integration](#logging)
@@ -265,6 +267,42 @@ given(client).when("GET", "/users/1").then()\
     .status_code(200)\
     .validate_data(User)
 ```
+
+### Asynchronous Requests
+ReqFlow supports asynchronous requests to enhance performance for I/O-bound operations.
+
+```python linenums="1"
+import asyncio
+import pytest 
+
+
+@pytest.mark.asyncio
+async def test_get_request_async():
+    client = Client(base_url="https://httpbin.org")
+    result = await given(client).when("GET", "/get?foo=bar").then_async()
+    result.status_code(200).assert_body("args.foo", equal_to("bar"))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("test_data", [
+    (["/get", "/ip", "/user-agent"], [{"test": f"value{i}"} for i in range(50)])
+])
+async def test_async_performance(test_data):
+    endpoints, param_list = test_data
+    async with Client(base_url="https://httpbin.org") as client:
+
+        tasks = [
+            given(client).query_param(params).when("GET", endpoint).then_async()
+            for params in param_list
+            for endpoint in endpoints
+        ]
+        
+        results = await asyncio.gather(*tasks)
+        for result in results:
+            result.status_code(200)
+```
+
+For more information on async support, please refer to the [documentation](https://reqflow.org/quick_start/#asynchronous-functionality-in-reqflow).
 
 ### Upload files
 

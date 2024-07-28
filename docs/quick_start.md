@@ -401,7 +401,8 @@ Asynchronous programming enhances the performance and responsiveness of applicat
 
 #### How to Use Async with ReqFlow
 
-ReqFlow simplifies switching between synchronous and asynchronous requests. To use async functionality, replace the `then` method with `then_async`.
+ReqFlow simplifies switching between synchronous and asynchronous requests. To use async functionality, replace the `then` method with `then_async`. Because of the nature of async programming, the `then_async` method returns a coroutine object that needs to be awaited.
+Hence, the following validations e.g. `status_code`, `assert_body`, etc. should be performed after awaiting the `then_async` method.
 
 #### Managing the Client
 
