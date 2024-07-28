@@ -388,3 +388,183 @@ def pytest_sessionfinish(session, exitstatus):
 
 With the example above, the report will be generated after the test session is finished. 
 The results will be aggregated across all test functions and clients within the session.
+
+### Asynchronous Functionality in ReqFlow
+
+#### Why Use Async in API Testing
+
+Asynchronous programming enhances the performance and responsiveness of applications that involve I/O-bound operations, such as API testing or general network communication. Here are some key benefits:
+
+1. **Concurrent Requests**: Async allows multiple requests to be performed concurrently, which is beneficial when testing endpoints that can handle simultaneous connections.
+2. **Improved Performance**: Asynchronous code can lead to better performance and resource utilization since it does not block execution while waiting for I/O operations to complete.
+3. **Scalability**: Async is more scalable for applications that need to handle many simultaneous requests, reducing overhead compared to synchronous execution.
+
+#### How to Use Async with ReqFlow
+
+ReqFlow simplifies switching between synchronous and asynchronous requests. To use async functionality, replace the `then` method with `then_async`.
+
+#### Managing the Client
+
+When using async with ReqFlow, it is important to manage the lifecycle of the `Client` to ensure resources are properly cleaned up. There are three primary methods for managing the client:
+
+1. **Direct Instantiation**: Create and close the client within each test.
+2. **Context Manager**: Use the `with` context manager to automatically handle client closure.
+3. **Use embedded client**: Use the `url` parameter in the `given` method to manage the client lifecycle internally so that the client is created and closed automatically for each request.
+
+##### Using Async with PyTest
+
+To run asynchronous tests with PyTest, use the `pytest-asyncio` plugin, which allows defining async tests with `async def` and using the `pytest.mark.asyncio` decorator.
+
+##### Direct Instantiation
+
+```python linenums="1"
+@pytest.mark.asyncio
+async def test_get_request_async():
+    client = Client(base_url="https://httpbin.org")
+    result = await given(client).when("GET", "/get?foo=bar").then_async()
+    result.status_code(200).assert_body("args.foo", equal_to("bar"))
+
+@pytest.mark.asyncio
+async def test_post_request_async():
+    client = Client(base_url="https://httpbin.org")
+    payload = {"foo": "bar"}
+    result = await given(client).body(payload).when("POST", "/post").then_async()
+    result.status_code(200).assert_body("json.foo", equal_to("bar"))
+```
+
+##### Context Manager
+
+```python linenums="1"
+@pytest.mark.asyncio
+async def test_get_request_with_context_manager_async():
+    async with Client(base_url="https://httpbin.org") as client:
+        result = await given(client).when("GET", "/get?foo=bar").then_async()
+        result.status_code(200).assert_body("args.foo", equal_to("bar"))
+
+@pytest.mark.asyncio
+async def test_post_request_with_context_manager_async():
+    async with Client(base_url="https://httpbin.org") as client:
+        payload = {"foo": "bar"}
+        result = await given(client).body(payload).when("POST", "/post").then_async()
+        result.status_code(200).assert_body("json.foo", equal_to("bar"))
+```
+
+##### Using Embedded Client
+
+```python linenums="1"
+@pytest.mark.asyncio
+async def test_get_request_with_embedded_client_async():
+    result = await given(url="https://httpbin.org").when("GET", "/get?foo=bar").then_async()
+    result.status_code(200).assert_body("args.foo", equal_to("bar"))
+
+@pytest.mark.asyncio
+async def test_post_request_with_embedded_client_async():
+    payload = {"foo": "bar"}
+    result = await given(url="https://httpbin.org").body(payload).when("POST", "/post").then_async()
+    result.status_code(200).assert_body("json.foo", equal_to("bar"))
+```
+
+#### Making Concurrent Requests with Async
+
+One of the key advantages of using async is the ability to perform concurrent requests, significantly improving performance when dealing with multiple endpoints or repeated requests.
+
+```python linenums="1"
+import pytest
+import asyncio
+from reqflow import Client, given
+from reqflow.assertions import equal_to
+
+
+@pytest.mark.asyncio
+async def test_concurrent_requests():
+    async with Client(base_url="https://httpbin.org") as client:
+        tasks = [
+            given(client).when("GET", "/get?foo=bar").then_async(),
+            given(client).when("GET", "/ip").then_async(),
+            given(client).when("GET", "/user-agent").then_async()
+        ]
+
+        results = await asyncio.gather(*tasks)
+
+        for result in results:
+            result.status_code(200)
+
+            
+@pytest.mark.asyncio
+async def test_concurrent_post_requests():
+    async with Client(base_url="https://httpbin.org") as client:
+        payloads = [{"foo": f"value{i}"} for i in range(3)]
+        tasks = [given(client).body(payload).when("POST", "/post").then_async() for payload in payloads]
+
+        results = await asyncio.gather(*tasks)
+
+        for result in results:
+            result.status_code(200).assert_body("json.foo", equal_to(result.request.json["foo"]))
+```
+
+#### Performance Comparison - Sync vs Async
+
+To demonstrate the performance benefits of async requests, we can compare the execution time of synchronous and asynchronous tests.
+
+```python linenums="1"
+import pytest
+import time
+import asyncio
+from reqflow import Client, given
+
+@pytest.mark.parametrize("test_data", [
+    (["/get", "/ip", "/user-agent"], [{"test": f"value{i}"} for i in range(50)])
+])
+def test_sync_performance(test_data):
+    endpoints, param_list = test_data
+    client = Client(base_url="https://httpbin.org")
+
+    start_time = time.time()
+
+    results = []
+    for params in param_list:
+        for endpoint in endpoints:
+            result = given(client).query_param(params).when("GET", endpoint).then()
+            results.append(result)
+            result.status_code(200)
+
+    end_time = time.time()
+
+    total_duration = end_time - start_time
+    print(f"Synchronous requests to {endpoints} with diverse params total duration: {total_duration} seconds")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("test_data", [
+    (["/get", "/ip", "/user-agent"], [{"test": f"value{i}"} for i in range(50)])
+])
+async def test_async_performance(test_data):
+    endpoints, param_list = test_data
+    async with Client(base_url="https://httpbin.org") as client:
+        start_time = time.time()
+
+        tasks = [
+            given(client).query_param(params).when("GET", endpoint).then_async()
+            for params in param_list
+            for endpoint in endpoints
+        ]
+
+        results = await asyncio.gather(*tasks)
+
+        end_time = time.time()
+
+        total_duration = end_time - start_time
+        print(f"Asynchronous requests to {endpoints} with diverse params total duration: {total_duration} seconds")
+
+        for result in results:
+            result.status_code(200)
+```
+
+As a result, the asynchronous test will complete significantly faster (**2.7 sec**) than the synchronous test (**39 sec**) due to the concurrent execution of requests:
+
+```bash
+======================= 2 passed, in 41.79s =======================
+PASSED                        [ 50%]Synchronous requests to ['/get', '/ip', '/user-agent'] with diverse params total duration: 38.94446110725403 seconds
+PASSED                       [100%]Asynchronous requests to ['/get', '/ip', '/user-agent'] with diverse params total duration: 2.7714710235595703 seconds
+```
+
