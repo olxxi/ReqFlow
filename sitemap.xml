@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://reqflow.org/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/assertions/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/client/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/fluent_api/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/logger/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/quick_start/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://reqflow.org/response/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+</urlset>
